@@ -1,0 +1,11 @@
+prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: libpgtypes
+Description: PostgreSQL libpgtypes library
+URL: https://www.postgresql.org/
+Version: 17.6
+Libs: -L${libdir} -lpgtypes
+Libs.private: -lws2_32 -L${libdir} -lpgport D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/libcrypto.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/libssl.lib -lpgcommon D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/z.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/zstd.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/libcrypto.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/libssl.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/z.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/zstd.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/z.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/zstd.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/z.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/zstd.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/z.lib D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/zstd.lib
+Cflags: -I${includedir}

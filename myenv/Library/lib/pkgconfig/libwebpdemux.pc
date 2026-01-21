@@ -1,0 +1,11 @@
+prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libwebpdemux
+Description: Library for parsing the WebP graphics format container
+Version: 1.6.0
+Requires.private: libwebp >= 0.2.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -llibwebpdemux

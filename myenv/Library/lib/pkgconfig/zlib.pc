@@ -1,0 +1,13 @@
+prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+exec_prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+libdir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib
+sharedlibdir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib
+includedir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.3.1
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

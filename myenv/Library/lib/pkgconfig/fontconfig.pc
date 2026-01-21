@@ -1,0 +1,16 @@
+prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+sysconfdir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/etc
+localstatedir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/var
+confdir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/etc/fonts
+cachedir=LOCAL_APPDATA_FONTCONFIG_CACHE
+
+Name: Fontconfig
+Description: Font configuration and customization library
+Version: 2.15.0
+Requires: freetype2 >=  21.0.15
+Libs: -L${libdir} -lfontconfig
+Libs.private: D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib/expat.lib
+Cflags: -I${includedir}

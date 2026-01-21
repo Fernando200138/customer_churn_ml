@@ -1,0 +1,11 @@
+prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library 
+exec_prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library 
+libdir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib 
+includedir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/include 
+modules=0 
+Name: libXML 
+Version: 2.13.9 
+Description: libXML library version2. 
+Requires: 
+Libs: -LD:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib -lxml2 -liconv -lz 
+Cflags: -ID:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/include/libxml2 -ID:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/include 

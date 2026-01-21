@@ -1,0 +1,12 @@
+prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+exec_prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+libdir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib
+includedir=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/include/libpng16
+
+Name: libpng
+Description: Loads and saves PNG files
+Version: 1.6.50
+Requires.private: zlib
+Libs: -L${libdir} -lpng16
+Libs.private: -lz
+Cflags: -I${includedir}

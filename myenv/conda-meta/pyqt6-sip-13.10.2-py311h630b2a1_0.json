@@ -1,0 +1,108 @@
+{
+  "name": "pyqt6-sip",
+  "version": "13.10.2",
+  "build": "py311h630b2a1_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/win-64",
+  "subdir": "win-64",
+  "fn": "pyqt6-sip-13.10.2-py311h630b2a1_0.conda",
+  "md5": "d0246de058b3459636a3651bb63fd086",
+  "url": "https://repo.anaconda.com/pkgs/main/win-64/pyqt6-sip-13.10.2-py311h630b2a1_0.conda",
+  "sha256": "2beb3e1211bb672f720c6d7a60b4215732c0f1ed3536464e93b4b175c8adbd10",
+  "depends": [
+    "python >=3.11,<3.12.0a0",
+    "ucrt >=10.0.20348.0",
+    "vc >=14.3,<15",
+    "vc14_runtime >=14.42.34433"
+  ],
+  "constrains": [],
+  "license": "GPL-3.0-only",
+  "timestamp": 1757511121000,
+  "size": 78121,
+  "requested_spec": "None",
+  "package_tarball_full_path": "C:\\Users\\ferna\\anaconda3\\pkgs\\pyqt6-sip-13.10.2-py311h630b2a1_0.conda",
+  "extracted_package_dir": "C:\\Users\\ferna\\anaconda3\\pkgs\\pyqt6-sip-13.10.2-py311h630b2a1_0",
+  "files": [
+    "Lib/site-packages/PyQt6/sip.cp311-win_amd64.pyd",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/INSTALLER",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/METADATA",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/RECORD",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/REQUESTED",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/WHEEL",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/direct_url.json",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/licenses/LICENSE",
+    "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/top_level.txt"
+  ],
+  "paths_data": {
+    "paths_version": 1,
+    "paths": [
+      {
+        "_path": "Lib/site-packages/PyQt6/sip.cp311-win_amd64.pyd",
+        "path_type": "hardlink",
+        "sha256": "9a478dee0f257fd960c7a8b550db6322c341bb3d41df80925ec4473b4f3e478c",
+        "size_in_bytes": 123208,
+        "sha256_in_prefix": "9a478dee0f257fd960c7a8b550db6322c341bb3d41df80925ec4473b4f3e478c"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/INSTALLER",
+        "path_type": "hardlink",
+        "sha256": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8",
+        "size_in_bytes": 5,
+        "sha256_in_prefix": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/METADATA",
+        "path_type": "hardlink",
+        "sha256": "d9313d2c7560efb791759ec9b1fcd3d1c432c58ea6ae44a61688f8bb8f0a037c",
+        "size_in_bytes": 515,
+        "sha256_in_prefix": "d9313d2c7560efb791759ec9b1fcd3d1c432c58ea6ae44a61688f8bb8f0a037c"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/RECORD",
+        "path_type": "hardlink",
+        "sha256": "ad98094cfde6f18758cb8bc8e3a4e39f2bae84cc8b8f03524c5198cccd76151e",
+        "size_in_bytes": 791,
+        "sha256_in_prefix": "ad98094cfde6f18758cb8bc8e3a4e39f2bae84cc8b8f03524c5198cccd76151e"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/REQUESTED",
+        "path_type": "hardlink",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_in_bytes": 0,
+        "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/WHEEL",
+        "path_type": "hardlink",
+        "sha256": "a6423eb3928a09309745cb9a9910a99941caf650518957f5982f7f5546525e07",
+        "size_in_bytes": 101,
+        "sha256_in_prefix": "a6423eb3928a09309745cb9a9910a99941caf650518957f5982f7f5546525e07"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/direct_url.json",
+        "path_type": "hardlink",
+        "sha256": "2acd070c8d21b78737fa1922b3d73b6cb3b4e998e0ea10dffa38594e155930ff",
+        "size_in_bytes": 97,
+        "sha256_in_prefix": "2acd070c8d21b78737fa1922b3d73b6cb3b4e998e0ea10dffa38594e155930ff"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/licenses/LICENSE",
+        "path_type": "hardlink",
+        "sha256": "3e6f5b427c36f94ecf86bc01698af7030a1ed6eb3748110d5dbb8d142d804611",
+        "size_in_bytes": 1304,
+        "sha256_in_prefix": "3e6f5b427c36f94ecf86bc01698af7030a1ed6eb3748110d5dbb8d142d804611"
+      },
+      {
+        "_path": "Lib/site-packages/pyqt6_sip-13.10.2.dist-info/top_level.txt",
+        "path_type": "hardlink",
+        "sha256": "b8685577efad0bd45ce6f3148070b22522ef2ba420869010bb0fde1a6340871f",
+        "size_in_bytes": 6,
+        "sha256_in_prefix": "b8685577efad0bd45ce6f3148070b22522ef2ba420869010bb0fde1a6340871f"
+      }
+    ]
+  },
+  "link": {
+    "source": "C:\\Users\\ferna\\anaconda3\\pkgs\\pyqt6-sip-13.10.2-py311h630b2a1_0",
+    "type": 1
+  }
+}

@@ -1,0 +1,7 @@
+
+Name: Graphite2
+Description: Font rendering engine for Complex Scripts
+Version: 3.0.1
+Libs: -LD:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/lib -lgraphite2
+Cflags: -ID:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library/include
+

@@ -1,0 +1,8 @@
+prefix=D:/Documentos/Vida_profesional/Coding/Projects/customer_churn_ml/myenv/Library
+includedir=${prefix}/include
+
+Name: cairo-ft
+Description: FreeType font backend for cairo graphics library
+Version: 1.18.4
+Requires: cairo, freetype2 >=  23.0.17
+Cflags: -I${includedir}

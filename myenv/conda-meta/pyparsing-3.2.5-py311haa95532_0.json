@@ -1,0 +1,305 @@
+{
+  "name": "pyparsing",
+  "version": "3.2.5",
+  "build": "py311haa95532_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/win-64",
+  "subdir": "win-64",
+  "fn": "pyparsing-3.2.5-py311haa95532_0.conda",
+  "md5": "6e45ef90b42190768b68b29fce0e2586",
+  "url": "https://repo.anaconda.com/pkgs/main/win-64/pyparsing-3.2.5-py311haa95532_0.conda",
+  "sha256": "38c32f17c99453dd0911d2641634556e86e0abb30d022a499a47230c4c0d5e91",
+  "depends": [
+    "python >=3.11,<3.12.0a0"
+  ],
+  "constrains": [],
+  "license": "MIT",
+  "timestamp": 1763973844000,
+  "size": 571159,
+  "requested_spec": "None",
+  "package_tarball_full_path": "C:\\Users\\ferna\\anaconda3\\pkgs\\pyparsing-3.2.5-py311haa95532_0.conda",
+  "extracted_package_dir": "C:\\Users\\ferna\\anaconda3\\pkgs\\pyparsing-3.2.5-py311haa95532_0",
+  "files": [
+    "Lib/site-packages/pyparsing-3.2.5.dist-info/INSTALLER",
+    "Lib/site-packages/pyparsing-3.2.5.dist-info/METADATA",
+    "Lib/site-packages/pyparsing-3.2.5.dist-info/RECORD",
+    "Lib/site-packages/pyparsing-3.2.5.dist-info/REQUESTED",
+    "Lib/site-packages/pyparsing-3.2.5.dist-info/WHEEL",
+    "Lib/site-packages/pyparsing-3.2.5.dist-info/direct_url.json",
+    "Lib/site-packages/pyparsing-3.2.5.dist-info/licenses/LICENSE",
+    "Lib/site-packages/pyparsing/__init__.py",
+    "Lib/site-packages/pyparsing/__pycache__/__init__.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/actions.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/common.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/core.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/exceptions.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/helpers.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/results.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/testing.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/unicode.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/__pycache__/util.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/actions.py",
+    "Lib/site-packages/pyparsing/common.py",
+    "Lib/site-packages/pyparsing/core.py",
+    "Lib/site-packages/pyparsing/diagram/__init__.py",
+    "Lib/site-packages/pyparsing/diagram/__pycache__/__init__.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/exceptions.py",
+    "Lib/site-packages/pyparsing/helpers.py",
+    "Lib/site-packages/pyparsing/py.typed",
+    "Lib/site-packages/pyparsing/results.py",
+    "Lib/site-packages/pyparsing/testing.py",
+    "Lib/site-packages/pyparsing/tools/__init__.py",
+    "Lib/site-packages/pyparsing/tools/__pycache__/__init__.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/tools/__pycache__/cvt_pyparsing_pep8_names.cpython-311.pyc",
+    "Lib/site-packages/pyparsing/tools/cvt_pyparsing_pep8_names.py",
+    "Lib/site-packages/pyparsing/unicode.py",
+    "Lib/site-packages/pyparsing/util.py"
+  ],
+  "paths_data": {
+    "paths_version": 1,
+    "paths": [
+      {
+        "_path": "Lib/site-packages/pyparsing-3.2.5.dist-info/INSTALLER",
+        "path_type": "hardlink",
+        "sha256": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8",
+        "size_in_bytes": 5,
+        "sha256_in_prefix": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing-3.2.5.dist-info/METADATA",
+        "path_type": "hardlink",
+        "sha256": "cd543f26f0f59ac7b446f57cc91e8def7a3eb735fdd5e91c4e402b8725696eba",
+        "size_in_bytes": 5030,
+        "sha256_in_prefix": "cd543f26f0f59ac7b446f57cc91e8def7a3eb735fdd5e91c4e402b8725696eba"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing-3.2.5.dist-info/RECORD",
+        "path_type": "hardlink",
+        "sha256": "671a9500af512f08c5945cdbeccff926af3533a8432a9b6935baa3040834bc9a",
+        "size_in_bytes": 2395,
+        "sha256_in_prefix": "671a9500af512f08c5945cdbeccff926af3533a8432a9b6935baa3040834bc9a"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing-3.2.5.dist-info/REQUESTED",
+        "path_type": "hardlink",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_in_bytes": 0,
+        "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing-3.2.5.dist-info/WHEEL",
+        "path_type": "hardlink",
+        "sha256": "1b68144734c4b66791f27add5d425f3620775585718a03d0f9b110ba3a4d88db",
+        "size_in_bytes": 82,
+        "sha256_in_prefix": "1b68144734c4b66791f27add5d425f3620775585718a03d0f9b110ba3a4d88db"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing-3.2.5.dist-info/direct_url.json",
+        "path_type": "hardlink",
+        "sha256": "7bec9bd8514d6b207725f13055848e3d5433cbc7485e227441e75a2411f629d5",
+        "size_in_bytes": 87,
+        "sha256_in_prefix": "7bec9bd8514d6b207725f13055848e3d5433cbc7485e227441e75a2411f629d5"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing-3.2.5.dist-info/licenses/LICENSE",
+        "path_type": "hardlink",
+        "sha256": "10d5120a16805804ffda8b688c220bfb4e8f39741b57320604d455a309e01972",
+        "size_in_bytes": 1023,
+        "sha256_in_prefix": "10d5120a16805804ffda8b688c220bfb4e8f39741b57320604d455a309e01972"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__init__.py",
+        "path_type": "hardlink",
+        "sha256": "5d6127ca231c53c7ee1ab8a9e7d769dfd943d70047b3befb10abff1ac7730fcd",
+        "size_in_bytes": 9039,
+        "sha256_in_prefix": "5d6127ca231c53c7ee1ab8a9e7d769dfd943d70047b3befb10abff1ac7730fcd"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/__init__.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "4844d393cec958cb9ef76e56e213e24c21e616ac3ad5833b55fa92a416fd8b34",
+        "size_in_bytes": 8195,
+        "sha256_in_prefix": "4844d393cec958cb9ef76e56e213e24c21e616ac3ad5833b55fa92a416fd8b34"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/actions.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "6ad5eeafb969b3babce17ee453a087e151224ace83dadfe1e9aa3ee113c5abe4",
+        "size_in_bytes": 10202,
+        "sha256_in_prefix": "6ad5eeafb969b3babce17ee453a087e151224ace83dadfe1e9aa3ee113c5abe4"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/common.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "f945f5a7e85549d7e899308169101cce363c400ba99d895a851b7e18f08b6b8a",
+        "size_in_bytes": 16136,
+        "sha256_in_prefix": "f945f5a7e85549d7e899308169101cce363c400ba99d895a851b7e18f08b6b8a"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/core.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "038380664452952ea068b373a3a5295199f3905cb3f773a971e742df546fca55",
+        "size_in_bytes": 309979,
+        "sha256_in_prefix": "038380664452952ea068b373a3a5295199f3905cb3f773a971e742df546fca55"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/exceptions.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "410efb86ddeca7095f18d63d2fce7ab91806320e20b39f1481574d0ab25910cb",
+        "size_in_bytes": 14823,
+        "sha256_in_prefix": "410efb86ddeca7095f18d63d2fce7ab91806320e20b39f1481574d0ab25910cb"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/helpers.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "8cf6f14014ae945d0eadfb6fa311bf9c6df8d07e927ecc08cda74ffa1c39ecd0",
+        "size_in_bytes": 53623,
+        "sha256_in_prefix": "8cf6f14014ae945d0eadfb6fa311bf9c6df8d07e927ecc08cda74ffa1c39ecd0"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/results.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "bd58fe50792f5f20494e312beeded7aebe51753a2391efc03ad70946fc07cd31",
+        "size_in_bytes": 40186,
+        "sha256_in_prefix": "bd58fe50792f5f20494e312beeded7aebe51753a2391efc03ad70946fc07cd31"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/testing.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "1169de987c164276d6ba6548985fc5e5cd4385494f99089fe0f4bec08b266a0b",
+        "size_in_bytes": 21526,
+        "sha256_in_prefix": "1169de987c164276d6ba6548985fc5e5cd4385494f99089fe0f4bec08b266a0b"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/unicode.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "96d3e51911cfb1c1a0164c8a1123f10d43de77d7574aea227f50cb7ba7818e97",
+        "size_in_bytes": 15307,
+        "sha256_in_prefix": "96d3e51911cfb1c1a0164c8a1123f10d43de77d7574aea227f50cb7ba7818e97"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/__pycache__/util.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "8c761a4007965f61e082b436436df0ca88d4d33786989c46cae8be355088dc72",
+        "size_in_bytes": 24462,
+        "sha256_in_prefix": "8c761a4007965f61e082b436436df0ca88d4d33786989c46cae8be355088dc72"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/actions.py",
+        "path_type": "hardlink",
+        "sha256": "70e2e7045bd10b5c2ad215b825eb865f47f28d8bad0460b247a72ab0b50c1cba",
+        "size_in_bytes": 7988,
+        "sha256_in_prefix": "70e2e7045bd10b5c2ad215b825eb865f47f28d8bad0460b247a72ab0b50c1cba"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/common.py",
+        "path_type": "hardlink",
+        "sha256": "73ebeb52c65f36361940fc0e29b996d8b7168f9422b25eaf66ba0fd8bc00b69a",
+        "size_in_bytes": 14377,
+        "sha256_in_prefix": "73ebeb52c65f36361940fc0e29b996d8b7168f9422b25eaf66ba0fd8bc00b69a"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/core.py",
+        "path_type": "hardlink",
+        "sha256": "c03ababf187873c57237c01b35444f111f49359093092c52af1b14c3a0d88347",
+        "size_in_bytes": 244142,
+        "sha256_in_prefix": "c03ababf187873c57237c01b35444f111f49359093092c52af1b14c3a0d88347"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/diagram/__init__.py",
+        "path_type": "hardlink",
+        "sha256": "fb3cef3cd87816d54cd1edfa09d0a9a4fe33fed4a236852ae9b6e720a7b333e2",
+        "size_in_bytes": 27100,
+        "sha256_in_prefix": "fb3cef3cd87816d54cd1edfa09d0a9a4fe33fed4a236852ae9b6e720a7b333e2"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/diagram/__pycache__/__init__.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "8022886795dc53e2f9003b6ff623cc3124f49d2f8293b75688eca4c039c4bae3",
+        "size_in_bytes": 31974,
+        "sha256_in_prefix": "8022886795dc53e2f9003b6ff623cc3124f49d2f8293b75688eca4c039c4bae3"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/exceptions.py",
+        "path_type": "hardlink",
+        "sha256": "f2bc2c15c8858240c395f564ff3a28b3f85bb4979fba7cbba01f54521d8632a9",
+        "size_in_bytes": 10304,
+        "sha256_in_prefix": "f2bc2c15c8858240c395f564ff3a28b3f85bb4979fba7cbba01f54521d8632a9"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/helpers.py",
+        "path_type": "hardlink",
+        "sha256": "a9c619e4b5965f1220ec63669657c58daf1934fbd686ac937dfb911677e7b3be",
+        "size_in_bytes": 41011,
+        "sha256_in_prefix": "a9c619e4b5965f1220ec63669657c58daf1934fbd686ac937dfb911677e7b3be"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/py.typed",
+        "path_type": "hardlink",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_in_bytes": 0,
+        "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/results.py",
+        "path_type": "hardlink",
+        "sha256": "bc770bc6eb5070e99260efb9a14074ecb12891d3e992801cd3003b289f1b04c2",
+        "size_in_bytes": 27849,
+        "sha256_in_prefix": "bc770bc6eb5070e99260efb9a14074ecb12891d3e992801cd3003b289f1b04c2"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/testing.py",
+        "path_type": "hardlink",
+        "sha256": "3f8cb2a7cfba5a212eef67d3540d4043a2ab5e98dbcc6d9cefc69d57023e4ef0",
+        "size_in_bytes": 15217,
+        "sha256_in_prefix": "3f8cb2a7cfba5a212eef67d3540d4043a2ab5e98dbcc6d9cefc69d57023e4ef0"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/tools/__init__.py",
+        "path_type": "hardlink",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_in_bytes": 0,
+        "sha256_in_prefix": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/tools/__pycache__/__init__.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "43ce7573526754f6ddbd855e9c00dfae214314fe30e9abd12d6a8d7975802e27",
+        "size_in_bytes": 154,
+        "sha256_in_prefix": "43ce7573526754f6ddbd855e9c00dfae214314fe30e9abd12d6a8d7975802e27"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/tools/__pycache__/cvt_pyparsing_pep8_names.cpython-311.pyc",
+        "path_type": "hardlink",
+        "sha256": "9d165ecb042318462ee12f7af552f3c156ff023fedc812a311d0268a2329c48c",
+        "size_in_bytes": 7853,
+        "sha256_in_prefix": "9d165ecb042318462ee12f7af552f3c156ff023fedc812a311d0268a2329c48c"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/tools/cvt_pyparsing_pep8_names.py",
+        "path_type": "hardlink",
+        "sha256": "08abf120188324bbe66e756fde62b4b7235464ddee6f7790e19d5e3b9e31f3f5",
+        "size_in_bytes": 5369,
+        "sha256_in_prefix": "08abf120188324bbe66e756fde62b4b7235464ddee6f7790e19d5e3b9e31f3f5"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/unicode.py",
+        "path_type": "hardlink",
+        "sha256": "7686a7bfb058401e0475045f7578a06a257f483859cb26814b082f544cfa7977",
+        "size_in_bytes": 10614,
+        "sha256_in_prefix": "7686a7bfb058401e0475045f7578a06a257f483859cb26814b082f544cfa7977"
+      },
+      {
+        "_path": "Lib/site-packages/pyparsing/util.py",
+        "path_type": "hardlink",
+        "sha256": "4a86355399c0b33b57a8a6cb3d503bc1798e3d0f02b7a35c179527231bae5e61",
+        "size_in_bytes": 14573,
+        "sha256_in_prefix": "4a86355399c0b33b57a8a6cb3d503bc1798e3d0f02b7a35c179527231bae5e61"
+      }
+    ]
+  },
+  "link": {
+    "source": "C:\\Users\\ferna\\anaconda3\\pkgs\\pyparsing-3.2.5-py311haa95532_0",
+    "type": 1
+  }
+}
