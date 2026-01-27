@@ -12,7 +12,7 @@ def load_data(path_file):
      
 
 def clean_basic_issues(df):
-   df = df.dropna() #Drops rows with nan values
+   df = df.dropna(axis=0) #Drops rows with nan values
    df = df.drop_duplicates() #drops duplicates
    return df
    
