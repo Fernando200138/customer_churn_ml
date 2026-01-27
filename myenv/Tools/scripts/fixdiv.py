@@ -137,6 +137,7 @@ import tokenize
 
 multi_ok = 0
 
+
 def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hm")
@@ -169,13 +170,17 @@ def main():
         exit = exit or x
     return exit
 
+
 def usage(msg):
     sys.stderr.write("%s: %s\n" % (sys.argv[0], msg))
     sys.stderr.write("Usage: %s [-m] warnings\n" % sys.argv[0])
     sys.stderr.write("Try `%s -h' for more information.\n" % sys.argv[0])
 
-PATTERN = (r"^(.+?):(\d+): DeprecationWarning: "
-           r"classic (int|long|float|complex) division$")
+
+PATTERN = (
+    r"^(.+?):(\d+): DeprecationWarning: " r"classic (int|long|float|complex) division$"
+)
+
 
 def readwarnings(warningsfile):
     prog = re.compile(PATTERN)
@@ -202,9 +207,10 @@ def readwarnings(warningsfile):
             list.append((int(lineno), sys.intern(what)))
     return warnings
 
+
 def process(filename, list):
-    print("-"*70)
-    assert list # if this fails, readwarnings() is broken
+    print("-" * 70)
+    assert list  # if this fails, readwarnings() is broken
     try:
         fp = open(filename)
     except IOError as msg:
@@ -214,7 +220,7 @@ def process(filename, list):
         print("Index:", filename)
         f = FileContext(fp)
         list.sort()
-        index = 0 # list[:index] has been processed, list[index:] is still to do
+        index = 0  # list[:index] has been processed, list[index:] is still to do
         g = tokenize.generate_tokens(f.readline)
         while 1:
             startlineno, endlineno, slashes = lineinfo = scanline(g)
@@ -251,7 +257,7 @@ def process(filename, list):
                         if len(rows) == 1:
                             print("*** More than one / operator in line", rows[0])
                         else:
-                            print("*** More than one / operator per statement", end=' ')
+                            print("*** More than one / operator per statement", end=" ")
                             print("in lines %d-%d" % (rows[0], rows[-1]))
                 intlong = []
                 floatcomplex = []
@@ -269,7 +275,7 @@ def process(filename, list):
                         continue
                     lastrow = row
                     line = chop(line)
-                    if line[col:col+1] != "/":
+                    if line[col : col + 1] != "/":
                         print("*** Can't find the / operator in line %d:" % row)
                         print("*", line)
                         continue
@@ -285,9 +291,12 @@ def process(filename, list):
                         print("True division / operator at line %d:" % row)
                         print("=", line)
                     elif intlong and floatcomplex:
-                        print("*** Ambiguous / operator (%s, %s) at line %d:" %
-                            ("|".join(intlong), "|".join(floatcomplex), row))
+                        print(
+                            "*** Ambiguous / operator (%s, %s) at line %d:"
+                            % ("|".join(intlong), "|".join(floatcomplex), row)
+                        )
                         print("?", line)
+
 
 def reportphantomwarnings(warnings, f):
     blocks = []
@@ -304,6 +313,7 @@ def reportphantomwarnings(warnings, f):
         print("*** Phantom %s warnings for line %d:" % (whats, row))
         f.report(row, mark="*")
 
+
 def report(slashes, message):
     lastrow = None
     for (row, col), line in slashes:
@@ -311,6 +321,7 @@ def report(slashes, message):
             print("*** %s on line %d:" % (message, row))
             print("*", chop(line))
             lastrow = row
+
 
 class FileContext:
     def __init__(self, fp, window=5, lineno=1):
@@ -320,6 +331,7 @@ class FileContext:
         self.eoflookahead = 0
         self.lookahead = []
         self.buffer = []
+
     def fill(self):
         while len(self.lookahead) < self.window and not self.eoflookahead:
             line = self.fp.readline()
@@ -327,6 +339,7 @@ class FileContext:
                 self.eoflookahead = 1
                 break
             self.lookahead.append(line)
+
     def readline(self):
         self.fill()
         if not self.lookahead:
@@ -335,6 +348,7 @@ class FileContext:
         self.buffer.append(line)
         self.lineno += 1
         return line
+
     def __getitem__(self, index):
         self.fill()
         bufstart = self.lineno - len(self.buffer)
@@ -344,15 +358,17 @@ class FileContext:
         if self.lineno <= index < lookend:
             return self.lookahead[index - self.lineno]
         raise KeyError
+
     def report(self, first, last=None, mark="*"):
         if last is None:
             last = first
-        for i in range(first, last+1):
+        for i in range(first, last + 1):
             try:
                 line = self[first]
             except KeyError:
                 line = "<missing line>"
             print(mark, chop(line))
+
 
 def scanline(g):
     slashes = []
@@ -368,11 +384,13 @@ def scanline(g):
             break
     return startlineno, endlineno, slashes
 
+
 def chop(line):
     if line.endswith("\n"):
         return line[:-1]
     else:
         return line
+
 
 if __name__ == "__main__":
     sys.exit(main())

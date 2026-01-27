@@ -57,12 +57,13 @@ internal_footer = """
 
 DEFINE = "#define {:<38} {:>3}\n"
 
-UINT32_MASK = (1<<32)-1
+UINT32_MASK = (1 << 32) - 1
+
 
 def write_int_array_from_ops(name, ops, out):
     bits = 0
     for op in ops:
-        bits |= 1<<op
+        bits |= 1 << op
     out.write(f"static const uint32_t {name}[8] = {{\n")
     for i in range(8):
         out.write(f"    {bits & UINT32_MASK}U,\n")
@@ -70,21 +71,26 @@ def write_int_array_from_ops(name, ops, out):
     assert bits == 0
     out.write(f"}};\n")
 
-def main(opcode_py, outfile='Include/opcode.h', internaloutfile='Include/internal/pycore_opcode.h'):
+
+def main(
+    opcode_py,
+    outfile="Include/opcode.h",
+    internaloutfile="Include/internal/pycore_opcode.h",
+):
     opcode = {}
-    if hasattr(tokenize, 'open'):
-        fp = tokenize.open(opcode_py)   # Python 3.2+
+    if hasattr(tokenize, "open"):
+        fp = tokenize.open(opcode_py)  # Python 3.2+
     else:
-        fp = open(opcode_py)            # Python 2.7
+        fp = open(opcode_py)  # Python 2.7
     with fp:
         code = fp.read()
     exec(code, opcode)
-    opmap = opcode['opmap']
-    opname = opcode['opname']
-    hasconst = opcode['hasconst']
-    hasjrel = opcode['hasjrel']
-    hasjabs = opcode['hasjabs']
-    used = [ False ] * 256
+    opmap = opcode["opmap"]
+    opname = opcode["opname"]
+    hasconst = opcode["hasconst"]
+    hasjrel = opcode["hasjrel"]
+    hasjabs = opcode["hasjabs"]
+    used = [False] * 256
     next_op = 1
 
     for name, op in opmap.items():
@@ -92,24 +98,24 @@ def main(opcode_py, outfile='Include/opcode.h', internaloutfile='Include/interna
 
     specialized_opmap = {}
     opname_including_specialized = opname.copy()
-    for name in opcode['_specialized_instructions']:
+    for name in opcode["_specialized_instructions"]:
         while used[next_op]:
             next_op += 1
         specialized_opmap[name] = next_op
         opname_including_specialized[next_op] = name
         used[next_op] = True
-    specialized_opmap['DO_TRACING'] = 255
-    opname_including_specialized[255] = 'DO_TRACING'
+    specialized_opmap["DO_TRACING"] = 255
+    opname_including_specialized[255] = "DO_TRACING"
     used[255] = True
 
-    with open(outfile, 'w') as fobj, open(internaloutfile, 'w') as iobj:
+    with open(outfile, "w") as fobj, open(internaloutfile, "w") as iobj:
         fobj.write(header)
         iobj.write(internal_header)
 
         for name in opname:
             if name in opmap:
                 fobj.write(DEFINE.format(name, opmap[name]))
-            if name == 'POP_EXCEPT': # Special entry for HAVE_ARGUMENT
+            if name == "POP_EXCEPT":  # Special entry for HAVE_ARGUMENT
                 fobj.write(DEFINE.format("HAVE_ARGUMENT", opcode["HAVE_ARGUMENT"]))
 
         for name, op in specialized_opmap.items():
@@ -118,8 +124,10 @@ def main(opcode_py, outfile='Include/opcode.h', internaloutfile='Include/interna
         iobj.write("\nextern const uint8_t _PyOpcode_Caches[256];\n")
         iobj.write("\nextern const uint8_t _PyOpcode_Deopt[256];\n")
         iobj.write("\n#ifdef NEED_OPCODE_TABLES\n")
-        write_int_array_from_ops("_PyOpcode_RelativeJump", opcode['hasjrel'], iobj)
-        write_int_array_from_ops("_PyOpcode_Jump", opcode['hasjrel'] + opcode['hasjabs'], iobj)
+        write_int_array_from_ops("_PyOpcode_RelativeJump", opcode["hasjrel"], iobj)
+        write_int_array_from_ops(
+            "_PyOpcode_Jump", opcode["hasjrel"] + opcode["hasjabs"], iobj
+        )
 
         iobj.write("\nconst uint8_t _PyOpcode_Caches[256] = {\n")
         for i, entries in enumerate(opcode["_inline_cache_entries"]):
@@ -155,7 +163,7 @@ def main(opcode_py, outfile='Include/opcode.h', internaloutfile='Include/interna
         for op, name in enumerate(opname_including_specialized):
             if name[0] != "<":
                 op = name
-            iobj.write(f'''    [{op}] = "{name}",\n''')
+            iobj.write(f"""    [{op}] = "{name}",\n""")
         iobj.write("};\n")
         iobj.write("#endif\n")
 
@@ -169,9 +177,8 @@ def main(opcode_py, outfile='Include/opcode.h', internaloutfile='Include/interna
         fobj.write(footer)
         iobj.write(internal_footer)
 
-
     print(f"{outfile} regenerated from {opcode_py}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2], sys.argv[3])

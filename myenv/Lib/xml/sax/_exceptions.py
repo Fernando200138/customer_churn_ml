@@ -1,10 +1,13 @@
 """Different kinds of SAX Exceptions"""
+
 import sys
+
 if sys.platform[:4] == "java":
     from java.lang import Exception
 del sys
 
 # ===== SAXEXCEPTION =====
+
 
 class SAXException(Exception):
     """Encapsulate an XML error or warning. This class can contain
@@ -42,6 +45,7 @@ class SAXException(Exception):
 
 
 # ===== SAXPARSEEXCEPTION =====
+
 
 class SAXParseException(SAXException):
     """Encapsulate an XML parse error or warning.
@@ -102,6 +106,7 @@ class SAXParseException(SAXException):
 
 # ===== SAXNOTRECOGNIZEDEXCEPTION =====
 
+
 class SAXNotRecognizedException(SAXException):
     """Exception class for an unrecognized identifier.
 
@@ -112,6 +117,7 @@ class SAXNotRecognizedException(SAXException):
 
 # ===== SAXNOTSUPPORTEDEXCEPTION =====
 
+
 class SAXNotSupportedException(SAXException):
     """Exception class for an unsupported operation.
 
@@ -120,7 +126,9 @@ class SAXNotSupportedException(SAXException):
     applications and extensions may use this class for similar
     purposes."""
 
+
 # ===== SAXNOTSUPPORTEDEXCEPTION =====
+
 
 class SAXReaderNotAvailable(SAXNotSupportedException):
     """Exception class for a missing driver.

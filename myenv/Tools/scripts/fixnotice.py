@@ -49,7 +49,7 @@ DRYRUN = 0
 VERBOSE = 0
 
 
-def usage(code, msg=''):
+def usage(code, msg=""):
     print(__doc__ % globals())
     if msg:
         print(msg)
@@ -59,23 +59,25 @@ def usage(code, msg=''):
 def main():
     global DRYRUN, OLD_NOTICE, NEW_NOTICE, VERBOSE
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hv',
-                                   ['help', 'oldnotice=', 'newnotice=',
-                                    'dry-run', 'verbose'])
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            "hv",
+            ["help", "oldnotice=", "newnotice=", "dry-run", "verbose"],
+        )
     except getopt.error as msg:
         usage(1, msg)
 
     for opt, arg in opts:
-        if opt in ('-h', '--help'):
+        if opt in ("-h", "--help"):
             usage(0)
-        elif opt in ('-v', '--verbose'):
+        elif opt in ("-v", "--verbose"):
             VERBOSE = 1
-        elif opt == '--dry-run':
+        elif opt == "--dry-run":
             DRYRUN = 1
-        elif opt == '--oldnotice':
+        elif opt == "--oldnotice":
             with open(arg) as fp:
                 OLD_NOTICE = fp.read()
-        elif opt == '--newnotice':
+        elif opt == "--newnotice":
             with open(arg) as fp:
                 NEW_NOTICE = fp.read()
 
@@ -89,14 +91,14 @@ def process(file):
     i = data.find(OLD_NOTICE)
     if i < 0:
         if VERBOSE:
-            print('no change:', file)
+            print("no change:", file)
         return
     elif DRYRUN or VERBOSE:
-        print('   change:', file)
+        print("   change:", file)
     if DRYRUN:
         # Don't actually change the file
         return
-    data = data[:i] + NEW_NOTICE + data[i+len(OLD_NOTICE):]
+    data = data[:i] + NEW_NOTICE + data[i + len(OLD_NOTICE) :]
     new = file + ".new"
     backup = file + ".bak"
     with open(new, "w") as f:
@@ -105,5 +107,5 @@ def process(file):
     os.rename(new, file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

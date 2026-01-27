@@ -5,118 +5,115 @@ import re
 
 __file__ = os.path.abspath(__file__)
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-INTERNAL = os.path.join(ROOT, 'Include', 'internal')
+INTERNAL = os.path.join(ROOT, "Include", "internal")
 
 
 IGNORED = {
-    'ACTION',  # Python/_warnings.c
-    'ATTR',  # Python/_warnings.c and Objects/funcobject.c
-    'DUNDER',  # Objects/typeobject.c
-    'RDUNDER',  # Objects/typeobject.c
-    'SPECIAL',  # Objects/weakrefobject.c
+    "ACTION",  # Python/_warnings.c
+    "ATTR",  # Python/_warnings.c and Objects/funcobject.c
+    "DUNDER",  # Objects/typeobject.c
+    "RDUNDER",  # Objects/typeobject.c
+    "SPECIAL",  # Objects/weakrefobject.c
 }
 IDENTIFIERS = [
     # from ADD() Python/_warnings.c
-    'default',
-    'ignore',
-
+    "default",
+    "ignore",
     # from GET_WARNINGS_ATTR() in Python/_warnings.c
-    'WarningMessage',
-    '_showwarnmsg',
-    '_warn_unawaited_coroutine',
-    'defaultaction',
-    'filters',
-    'onceregistry',
-
+    "WarningMessage",
+    "_showwarnmsg",
+    "_warn_unawaited_coroutine",
+    "defaultaction",
+    "filters",
+    "onceregistry",
     # from WRAP_METHOD() in Objects/weakrefobject.c
-    '__bytes__',
-    '__reversed__',
-
+    "__bytes__",
+    "__reversed__",
     # from COPY_ATTR() in Objects/funcobject.c
-    '__module__',
-    '__name__',
-    '__qualname__',
-    '__doc__',
-    '__annotations__',
-
+    "__module__",
+    "__name__",
+    "__qualname__",
+    "__doc__",
+    "__annotations__",
     # from SLOT* in Objects/typeobject.c
-    '__abs__',
-    '__add__',
-    '__and__',
-    '__divmod__',
-    '__float__',
-    '__floordiv__',
-    '__getitem__',
-    '__iadd__',
-    '__iand__',
-    '__ifloordiv__',
-    '__ilshift__',
-    '__imatmul__',
-    '__imod__',
-    '__imul__',
-    '__int__',
-    '__invert__',
-    '__ior__',
-    '__irshift__',
-    '__isub__',
-    '__itruediv__',
-    '__ixor__',
-    '__lshift__',
-    '__matmul__',
-    '__mod__',
-    '__mul__',
-    '__neg__',
-    '__or__',
-    '__pos__',
-    '__pow__',
-    '__radd__',
-    '__rand__',
-    '__rdivmod__',
-    '__rfloordiv__',
-    '__rlshift__',
-    '__rmatmul__',
-    '__rmod__',
-    '__rmul__',
-    '__ror__',
-    '__rpow__',
-    '__rrshift__',
-    '__rshift__',
-    '__rsub__',
-    '__rtruediv__',
-    '__rxor__',
-    '__str__',
-    '__sub__',
-    '__truediv__',
-    '__xor__',
+    "__abs__",
+    "__add__",
+    "__and__",
+    "__divmod__",
+    "__float__",
+    "__floordiv__",
+    "__getitem__",
+    "__iadd__",
+    "__iand__",
+    "__ifloordiv__",
+    "__ilshift__",
+    "__imatmul__",
+    "__imod__",
+    "__imul__",
+    "__int__",
+    "__invert__",
+    "__ior__",
+    "__irshift__",
+    "__isub__",
+    "__itruediv__",
+    "__ixor__",
+    "__lshift__",
+    "__matmul__",
+    "__mod__",
+    "__mul__",
+    "__neg__",
+    "__or__",
+    "__pos__",
+    "__pow__",
+    "__radd__",
+    "__rand__",
+    "__rdivmod__",
+    "__rfloordiv__",
+    "__rlshift__",
+    "__rmatmul__",
+    "__rmod__",
+    "__rmul__",
+    "__ror__",
+    "__rpow__",
+    "__rrshift__",
+    "__rshift__",
+    "__rsub__",
+    "__rtruediv__",
+    "__rxor__",
+    "__str__",
+    "__sub__",
+    "__truediv__",
+    "__xor__",
 ]
 
 
 #######################################
 # helpers
 
+
 def iter_files():
-    for name in ('Modules', 'Objects', 'Parser', 'PC', 'Programs', 'Python'):
+    for name in ("Modules", "Objects", "Parser", "PC", "Programs", "Python"):
         root = os.path.join(ROOT, name)
         for dirname, _, files in os.walk(root):
             for name in files:
-                if not name.endswith(('.c', '.h')):
+                if not name.endswith((".c", ".h")):
                     continue
                 yield os.path.join(dirname, name)
 
 
 def iter_global_strings():
-    id_regex = re.compile(r'\b_Py_ID\((\w+)\)')
+    id_regex = re.compile(r"\b_Py_ID\((\w+)\)")
     str_regex = re.compile(r'\b_Py_DECLARE_STR\((\w+), "(.*?)"\)')
     for filename in iter_files():
         try:
-            infile = open(filename, encoding='utf-8')
+            infile = open(filename, encoding="utf-8")
         except FileNotFoundError:
             # The file must have been a temporary file.
             continue
         with infile:
             for lno, line in enumerate(infile, 1):
                 for m in id_regex.finditer(line):
-                    identifier, = m.groups()
+                    (identifier,) = m.groups()
                     yield identifier, None, filename, lno, line
                 for m in str_regex.finditer(line):
                     varname, string = m.groups()
@@ -147,10 +144,10 @@ class Printer:
             self.level = save_level
 
     def write(self, arg):
-        eol = '\n'
+        eol = "\n"
         if self.continuation[-1]:
-            eol = f' \\{eol}' if arg else f'\\{eol}'
-        self.file.writelines(("    "*self.level, arg, eol))
+            eol = f" \\{eol}" if arg else f"\\{eol}"
+        self.file.writelines(("    " * self.level, arg, eol))
 
     @contextlib.contextmanager
     def block(self, prefix, suffix="", *, continuation=None):
@@ -172,49 +169,51 @@ def open_for_changes(filename, orig):
     yield outfile
     text = outfile.getvalue()
     if text != orig:
-        with open(filename, 'w', encoding='utf-8') as outfile:
+        with open(filename, "w", encoding="utf-8") as outfile:
             outfile.write(text)
     else:
-        print(f'# not changed: {filename}')
+        print(f"# not changed: {filename}")
 
 
 #######################################
 # the global objects
 
-START = '/* The following is auto-generated by Tools/scripts/generate_global_objects.py. */'
-END = '/* End auto-generated code */'
+START = (
+    "/* The following is auto-generated by Tools/scripts/generate_global_objects.py. */"
+)
+END = "/* End auto-generated code */"
 
 
 def generate_global_strings(identifiers, strings):
-    filename = os.path.join(INTERNAL, 'pycore_global_strings.h')
+    filename = os.path.join(INTERNAL, "pycore_global_strings.h")
 
     # Read the non-generated part of the file.
     with open(filename) as infile:
         orig = infile.read()
     lines = iter(orig.rstrip().splitlines())
-    before = '\n'.join(iter_to_marker(lines, START))
+    before = "\n".join(iter_to_marker(lines, START))
     for _ in iter_to_marker(lines, END):
         pass
-    after = '\n'.join(lines)
+    after = "\n".join(lines)
 
     # Generate the file.
     with open_for_changes(filename, orig) as outfile:
         printer = Printer(outfile)
         printer.write(before)
         printer.write(START)
-        with printer.block('struct _Py_global_strings', ';'):
-            with printer.block('struct', ' literals;'):
+        with printer.block("struct _Py_global_strings", ";"):
+            with printer.block("struct", " literals;"):
                 for literal, name in sorted(strings.items(), key=lambda x: x[1]):
                     printer.write(f'STRUCT_FOR_STR({name}, "{literal}")')
-            outfile.write('\n')
-            with printer.block('struct', ' identifiers;'):
+            outfile.write("\n")
+            with printer.block("struct", " identifiers;"):
                 for name in sorted(identifiers):
                     assert name.isidentifier(), name
-                    printer.write(f'STRUCT_FOR_ID({name})')
-            with printer.block('struct', ' ascii[128];'):
+                    printer.write(f"STRUCT_FOR_ID({name})")
+            with printer.block("struct", " ascii[128];"):
                 printer.write("PyASCIIObject _ascii;")
                 printer.write("uint8_t _data[2];")
-            with printer.block('struct', ' latin1[128];'):
+            with printer.block("struct", " latin1[128];"):
                 printer.write("PyCompactUnicodeObject _latin1;")
                 printer.write("uint8_t _data[2];")
         printer.write(END)
@@ -225,11 +224,11 @@ def generate_runtime_init(identifiers, strings):
     # First get some info from the declarations.
     nsmallposints = None
     nsmallnegints = None
-    with open(os.path.join(INTERNAL, 'pycore_global_objects.h')) as infile:
+    with open(os.path.join(INTERNAL, "pycore_global_objects.h")) as infile:
         for line in infile:
-            if line.startswith('#define _PY_NSMALLPOSINTS'):
+            if line.startswith("#define _PY_NSMALLPOSINTS"):
                 nsmallposints = int(line.split()[-1])
-            elif line.startswith('#define _PY_NSMALLNEGINTS'):
+            elif line.startswith("#define _PY_NSMALLNEGINTS"):
                 nsmallnegints = int(line.split()[-1])
                 break
         else:
@@ -237,58 +236,62 @@ def generate_runtime_init(identifiers, strings):
     assert nsmallposints and nsmallnegints
 
     # Then target the runtime initializer.
-    filename = os.path.join(INTERNAL, 'pycore_runtime_init.h')
+    filename = os.path.join(INTERNAL, "pycore_runtime_init.h")
 
     # Read the non-generated part of the file.
     with open(filename) as infile:
         orig = infile.read()
     lines = iter(orig.rstrip().splitlines())
-    before = '\n'.join(iter_to_marker(lines, START))
+    before = "\n".join(iter_to_marker(lines, START))
     for _ in iter_to_marker(lines, END):
         pass
-    after = '\n'.join(lines)
+    after = "\n".join(lines)
 
     # Generate the file.
     with open_for_changes(filename, orig) as outfile:
         printer = Printer(outfile)
         printer.write(before)
         printer.write(START)
-        with printer.block('#define _Py_global_objects_INIT', continuation=True):
-            with printer.block('.singletons =', ','):
+        with printer.block("#define _Py_global_objects_INIT", continuation=True):
+            with printer.block(".singletons =", ","):
                 # Global int objects.
-                with printer.block('.small_ints =', ','):
+                with printer.block(".small_ints =", ","):
                     for i in range(-nsmallnegints, nsmallposints):
-                        printer.write(f'_PyLong_DIGIT_INIT({i}),')
-                printer.write('')
+                        printer.write(f"_PyLong_DIGIT_INIT({i}),")
+                printer.write("")
                 # Global bytes objects.
-                printer.write('.bytes_empty = _PyBytes_SIMPLE_INIT(0, 0),')
-                with printer.block('.bytes_characters =', ','):
+                printer.write(".bytes_empty = _PyBytes_SIMPLE_INIT(0, 0),")
+                with printer.block(".bytes_characters =", ","):
                     for i in range(256):
-                        printer.write(f'_PyBytes_CHAR_INIT({i}),')
-                printer.write('')
+                        printer.write(f"_PyBytes_CHAR_INIT({i}),")
+                printer.write("")
                 # Global strings.
-                with printer.block('.strings =', ','):
-                    with printer.block('.literals =', ','):
-                        for literal, name in sorted(strings.items(), key=lambda x: x[1]):
+                with printer.block(".strings =", ","):
+                    with printer.block(".literals =", ","):
+                        for literal, name in sorted(
+                            strings.items(), key=lambda x: x[1]
+                        ):
                             printer.write(f'INIT_STR({name}, "{literal}"),')
-                    with printer.block('.identifiers =', ','):
+                    with printer.block(".identifiers =", ","):
                         for name in sorted(identifiers):
                             assert name.isidentifier(), name
-                            printer.write(f'INIT_ID({name}),')
-                    with printer.block('.ascii =', ','):
+                            printer.write(f"INIT_ID({name}),")
+                    with printer.block(".ascii =", ","):
                         for i in range(128):
                             printer.write(f'_PyASCIIObject_INIT("\\x{i:02x}"),')
-                    with printer.block('.latin1 =', ','):
+                    with printer.block(".latin1 =", ","):
                         for i in range(128, 256):
                             printer.write(f'_PyUnicode_LATIN1_INIT("\\x{i:02x}"),')
-                printer.write('')
-                with printer.block('.tuple_empty =', ','):
-                    printer.write('.ob_base = _PyVarObject_IMMORTAL_INIT(&PyTuple_Type, 0)')
+                printer.write("")
+                with printer.block(".tuple_empty =", ","):
+                    printer.write(
+                        ".ob_base = _PyVarObject_IMMORTAL_INIT(&PyTuple_Type, 0)"
+                    )
         printer.write(END)
         printer.write(after)
 
 
-def get_identifiers_and_strings() -> 'tuple[set[str], dict[str, str]]':
+def get_identifiers_and_strings() -> "tuple[set[str], dict[str, str]]":
     identifiers = set(IDENTIFIERS)
     strings = {}
     for name, string, *_ in iter_global_strings():
@@ -299,12 +302,15 @@ def get_identifiers_and_strings() -> 'tuple[set[str], dict[str, str]]':
             if string not in strings:
                 strings[string] = name
             elif name != strings[string]:
-                raise ValueError(f'string mismatch for {name!r} ({string!r} != {strings[name]!r}')
+                raise ValueError(
+                    f"string mismatch for {name!r} ({string!r} != {strings[name]!r}"
+                )
     return identifiers, strings
 
 
 #######################################
 # the script
+
 
 def main() -> None:
     identifiers, strings = get_identifiers_and_strings()
@@ -313,8 +319,9 @@ def main() -> None:
     generate_runtime_init(identifiers, strings)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
     main(**vars(args))

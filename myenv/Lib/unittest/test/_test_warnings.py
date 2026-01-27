@@ -14,15 +14,17 @@ import sys
 import unittest
 import warnings
 
+
 def warnfun():
-    warnings.warn('rw', RuntimeWarning)
+    warnings.warn("rw", RuntimeWarning)
+
 
 class TestWarnings(unittest.TestCase):
     # unittest warnings will be printed at most once per type (max one message
     # for the fail* methods, and one for the assert* methods)
     def test_assert(self):
-        self.assertEquals(2+2, 4)
-        self.assertEquals(2*2, 4)
+        self.assertEquals(2 + 2, 4)
+        self.assertEquals(2 * 2, 4)
         self.assertEquals(2**2, 4)
 
     def test_fail(self):
@@ -30,25 +32,25 @@ class TestWarnings(unittest.TestCase):
         self.failUnless(True)
 
     def test_other_unittest(self):
-        self.assertAlmostEqual(2+2, 4)
-        self.assertNotAlmostEqual(4+4, 2)
+        self.assertAlmostEqual(2 + 2, 4)
+        self.assertNotAlmostEqual(4 + 4, 2)
 
     # these warnings are normally silenced, but they are printed in unittest
     def test_deprecation(self):
-        warnings.warn('dw', DeprecationWarning)
-        warnings.warn('dw', DeprecationWarning)
-        warnings.warn('dw', DeprecationWarning)
+        warnings.warn("dw", DeprecationWarning)
+        warnings.warn("dw", DeprecationWarning)
+        warnings.warn("dw", DeprecationWarning)
 
     def test_import(self):
-        warnings.warn('iw', ImportWarning)
-        warnings.warn('iw', ImportWarning)
-        warnings.warn('iw', ImportWarning)
+        warnings.warn("iw", ImportWarning)
+        warnings.warn("iw", ImportWarning)
+        warnings.warn("iw", ImportWarning)
 
     # user warnings should always be printed
     def test_warning(self):
-        warnings.warn('uw')
-        warnings.warn('uw')
-        warnings.warn('uw')
+        warnings.warn("uw")
+        warnings.warn("uw")
+        warnings.warn("uw")
 
     # these warnings come from the same place; they will be printed
     # only once by default or three times if the 'always' filter is used
@@ -59,8 +61,7 @@ class TestWarnings(unittest.TestCase):
         warnfun()
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     with warnings.catch_warnings(record=True) as ws:
         # if an arg is provided pass it to unittest.main as 'warnings'
         if len(sys.argv) == 2:

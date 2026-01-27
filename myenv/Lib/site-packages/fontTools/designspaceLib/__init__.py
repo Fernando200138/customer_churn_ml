@@ -1,7 +1,7 @@
 """
-    designSpaceDocument
+designSpaceDocument
 
-    - Read and write designspace files
+- Read and write designspace files
 """
 
 from __future__ import annotations

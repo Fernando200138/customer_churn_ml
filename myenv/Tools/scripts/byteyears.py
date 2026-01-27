@@ -9,6 +9,7 @@
 import sys, os, time
 from stat import *
 
+
 def main():
 
     # Use lstat() to stat files if it exists, else stat()
@@ -18,21 +19,21 @@ def main():
         statfunc = os.stat
 
     # Parse options
-    if sys.argv[1] == '-m':
+    if sys.argv[1] == "-m":
         itime = ST_MTIME
         del sys.argv[1]
-    elif sys.argv[1] == '-c':
+    elif sys.argv[1] == "-c":
         itime = ST_CTIME
         del sys.argv[1]
-    elif sys.argv[1] == '-a':
+    elif sys.argv[1] == "-a":
         itime = ST_CTIME
         del sys.argv[1]
     else:
         itime = ST_MTIME
 
-    secs_per_year = 365.0 * 24.0 * 3600.0   # Scale factor
-    now = time.time()                       # Current time, for age computations
-    status = 0                              # Exit status, set to 1 on errors
+    secs_per_year = 365.0 * 24.0 * 3600.0  # Scale factor
+    now = time.time()  # Current time, for age computations
+    status = 0  # Exit status, set to 1 on errors
 
     # Compute max file name length
     maxlen = 1
@@ -52,10 +53,11 @@ def main():
             size = st[ST_SIZE]
             age = now - anytime
             byteyears = float(size) * float(age) / secs_per_year
-            print(filename.ljust(maxlen), end=' ')
+            print(filename.ljust(maxlen), end=" ")
             print(repr(int(byteyears)).rjust(8))
 
     sys.exit(status)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

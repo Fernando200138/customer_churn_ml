@@ -16,6 +16,7 @@ except ImportError:
     # emulate the module with a simple os.walk
     class pysource:
         has_python_ext = looks_like_python = can_be_compiled = None
+
         def walk_python_files(self, paths, *args, **kwargs):
             for path in paths:
                 if os.path.isfile(path):
@@ -25,21 +26,26 @@ except ImportError:
                         for filename in files:
                             if filename.endswith(".py"):
                                 yield os.path.join(root, filename)
+
     pysource = pysource()
 
+    print(
+        "The pysource module is not available; "
+        "no sophisticated Python source file search will be done.",
+        file=sys.stderr,
+    )
 
-    print("The pysource module is not available; "
-                         "no sophisticated Python source file search will be done.", file=sys.stderr)
 
+decl_re = re.compile(rb"^[ \t\f]*#.*?coding[:=][ \t]*([-\w.]+)")
+blank_re = re.compile(rb"^[ \t\f]*(?:[#\r\n]|$)")
 
-decl_re = re.compile(rb'^[ \t\f]*#.*?coding[:=][ \t]*([-\w.]+)')
-blank_re = re.compile(rb'^[ \t\f]*(?:[#\r\n]|$)')
 
 def get_declaration(line):
     match = decl_re.match(line)
     if match:
         return match.group(1)
-    return b''
+    return b""
+
 
 def has_correct_encoding(text, codec):
     try:
@@ -49,38 +55,41 @@ def has_correct_encoding(text, codec):
     else:
         return True
 
+
 def needs_declaration(fullpath):
     try:
-        infile = open(fullpath, 'rb')
-    except IOError: # Oops, the file was removed - ignore it
+        infile = open(fullpath, "rb")
+    except IOError:  # Oops, the file was removed - ignore it
         return None
 
     with infile:
         line1 = infile.readline()
         line2 = infile.readline()
 
-        if (get_declaration(line1) or
-            blank_re.match(line1) and get_declaration(line2)):
+        if get_declaration(line1) or blank_re.match(line1) and get_declaration(line2):
             # the file does have an encoding declaration, so trust it
             return False
 
         # check the whole file for non utf-8 characters
         rest = infile.read()
 
-    if has_correct_encoding(line1+line2+rest, "utf-8"):
+    if has_correct_encoding(line1 + line2 + rest, "utf-8"):
         return False
 
     return True
 
 
-usage = """Usage: %s [-cd] paths...
+usage = (
+    """Usage: %s [-cd] paths...
     -c: recognize Python source files trying to compile them
-    -d: debug output""" % sys.argv[0]
+    -d: debug output"""
+    % sys.argv[0]
+)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cd')
+        opts, args = getopt.getopt(sys.argv[1:], "cd")
     except getopt.error as msg:
         print(msg, file=sys.stderr)
         print(usage, file=sys.stderr)
@@ -90,9 +99,9 @@ if __name__ == '__main__':
     debug = False
 
     for o, a in opts:
-        if o == '-c':
+        if o == "-c":
             is_python = pysource.can_be_compiled
-        elif o == '-d':
+        elif o == "-d":
             debug = True
 
     if not args:

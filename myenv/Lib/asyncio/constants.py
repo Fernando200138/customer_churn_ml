@@ -30,6 +30,7 @@ SENDFILE_FALLBACK_READBUFFER_SIZE = 1024 * 256
 FLOW_CONTROL_HIGH_WATER_SSL_READ = 256  # KiB
 FLOW_CONTROL_HIGH_WATER_SSL_WRITE = 512  # KiB
 
+
 # The enum should be here to break circular dependencies between
 # base_events and sslproto
 class _SendfileMode(enum.Enum):

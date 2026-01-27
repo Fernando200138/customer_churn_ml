@@ -36,18 +36,19 @@ option to produce this format (since it is the original v7 Unix format).
 """
 import os, sys
 
-PYTHONLIB = 'libpython%d.%d.a' % sys.version_info[:2]
-PC_PYTHONLIB = 'Python%d%d.dll' % sys.version_info[:2]
-NM = 'nm -p -g %s'                      # For Linux, use "nm -g %s"
+PYTHONLIB = "libpython%d.%d.a" % sys.version_info[:2]
+PC_PYTHONLIB = "Python%d%d.dll" % sys.version_info[:2]
+NM = "nm -p -g %s"  # For Linux, use "nm -g %s"
 
-def symbols(lib=PYTHONLIB,types=('T','C','D')):
+
+def symbols(lib=PYTHONLIB, types=("T", "C", "D")):
 
     with os.popen(NM % lib) as pipe:
         lines = pipe.readlines()
     lines = [s.strip() for s in lines]
     symbols = {}
     for line in lines:
-        if len(line) == 0 or ':' in line:
+        if len(line) == 0 or ":" in line:
             continue
         items = line.split()
         if len(items) != 3:
@@ -55,22 +56,24 @@ def symbols(lib=PYTHONLIB,types=('T','C','D')):
         address, type, name = items
         if type not in types:
             continue
-        symbols[name] = address,type
+        symbols[name] = address, type
     return symbols
+
 
 def export_list(symbols):
 
     data = []
     code = []
-    for name,(addr,type) in symbols.items():
-        if type in ('C','D'):
-            data.append('\t'+name)
+    for name, (addr, type) in symbols.items():
+        if type in ("C", "D"):
+            data.append("\t" + name)
         else:
-            code.append('\t'+name)
+            code.append("\t" + name)
     data.sort()
-    data.append('')
+    data.append("")
     code.sort()
-    return ' DATA\n'.join(data)+'\n'+'\n'.join(code)
+    return " DATA\n".join(data) + "\n" + "\n".join(code)
+
 
 # Definition file template
 DEF_TEMPLATE = """\
@@ -80,25 +83,27 @@ EXPORTS
 
 # Special symbols that have to be included even though they don't
 # pass the filter
-SPECIALS = (
-    )
+SPECIALS = ()
 
-def filter_Python(symbols,specials=SPECIALS):
+
+def filter_Python(symbols, specials=SPECIALS):
 
     for name in list(symbols.keys()):
-        if name[:2] == 'Py' or name[:3] == '_Py':
+        if name[:2] == "Py" or name[:3] == "_Py":
             pass
         elif name not in specials:
             del symbols[name]
+
 
 def main():
 
     s = symbols(PYTHONLIB)
     filter_Python(s)
     exports = export_list(s)
-    f = sys.stdout # open('PC/python_nt.def','w')
+    f = sys.stdout  # open('PC/python_nt.def','w')
     f.write(DEF_TEMPLATE % (exports))
     # f.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

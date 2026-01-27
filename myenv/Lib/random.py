@@ -95,8 +95,8 @@ __all__ = [
 NV_MAGICCONST = 4 * _exp(-0.5) / _sqrt(2.0)
 LOG4 = _log(4.0)
 SG_MAGICCONST = 1.0 + _log(4.5)
-BPF = 53        # Number of bits in a float
-RECIP_BPF = 2 ** -BPF
+BPF = 53  # Number of bits in a float
+RECIP_BPF = 2**-BPF
 _ONE = 1
 
 
@@ -114,7 +114,7 @@ class Random(_random.Random):
 
     """
 
-    VERSION = 3     # used by getstate/setstate
+    VERSION = 3  # used by getstate/setstate
 
     def __init__(self, x=None):
         """Initialize an instance.
@@ -144,7 +144,7 @@ class Random(_random.Random):
         """
 
         if version == 1 and isinstance(a, (str, bytes)):
-            a = a.decode('latin-1') if isinstance(a, bytes) else a
+            a = a.decode("latin-1") if isinstance(a, bytes) else a
             x = ord(a[0]) << 7 if a else 0
             for c in map(ord, a):
                 x = ((1000003 * x) ^ c) & 0xFFFFFFFFFFFFFFFF
@@ -157,8 +157,10 @@ class Random(_random.Random):
             a = int.from_bytes(a + _sha512(a).digest())
 
         elif not isinstance(a, (type(None), int, float, str, bytes, bytearray)):
-            raise TypeError('The only supported seed types are: None,\n'
-                            'int, float, str, bytes, and bytearray.')
+            raise TypeError(
+                "The only supported seed types are: None,\n"
+                "int, float, str, bytes, and bytearray."
+            )
 
         super().seed(a)
         self.gauss_next = None
@@ -180,20 +182,19 @@ class Random(_random.Random):
             #   really unsigned 32-bit ints, so we convert negative ints from
             #   version 2 to positive longs for version 3.
             try:
-                internalstate = tuple(x % (2 ** 32) for x in internalstate)
+                internalstate = tuple(x % (2**32) for x in internalstate)
             except ValueError as e:
                 raise TypeError from e
             super().setstate(internalstate)
         else:
-            raise ValueError("state with version %s passed to "
-                             "Random.setstate() of version %s" %
-                             (version, self.VERSION))
-
+            raise ValueError(
+                "state with version %s passed to "
+                "Random.setstate() of version %s" % (version, self.VERSION)
+            )
 
     ## -------------------------------------------------------
     ## ---- Methods below this point do not need to be overridden or extended
     ## ---- when subclassing for the purpose of using a different core generator.
-
 
     ## -------------------- pickle support  -------------------
 
@@ -209,7 +210,6 @@ class Random(_random.Random):
     def __reduce__(self):
         return self.__class__, (), self.getstate()
 
-
     ## ---- internal support method for evenly distributed integers ----
 
     def __init_subclass__(cls, /, **kwargs):
@@ -222,13 +222,13 @@ class Random(_random.Random):
         """
 
         for c in cls.__mro__:
-            if '_randbelow' in c.__dict__:
+            if "_randbelow" in c.__dict__:
                 # just inherit it
                 break
-            if 'getrandbits' in c.__dict__:
+            if "getrandbits" in c.__dict__:
                 cls._randbelow = cls._randbelow_with_getrandbits
                 break
-            if 'random' in c.__dict__:
+            if "random" in c.__dict__:
                 cls._randbelow = cls._randbelow_without_getrandbits
                 break
 
@@ -242,7 +242,7 @@ class Random(_random.Random):
             r = getrandbits(k)
         return r
 
-    def _randbelow_without_getrandbits(self, n, maxsize=1<<BPF):
+    def _randbelow_without_getrandbits(self, n, maxsize=1 << BPF):
         """Return a random int in the range [0,n).  Defined for n > 0.
 
         The implementation does not use getrandbits, but only random.
@@ -250,19 +250,20 @@ class Random(_random.Random):
 
         random = self.random
         if n >= maxsize:
-            _warn("Underlying random() generator does not supply \n"
+            _warn(
+                "Underlying random() generator does not supply \n"
                 "enough bits to choose from a population range this large.\n"
-                "To remove the range limitation, add a getrandbits() method.")
+                "To remove the range limitation, add a getrandbits() method."
+            )
             return _floor(random() * n)
         rem = maxsize % n
-        limit = (maxsize - rem) / maxsize   # int(limit * maxsize) % n == 0
+        limit = (maxsize - rem) / maxsize  # int(limit * maxsize) % n == 0
         r = random()
         while r >= limit:
             r = random()
         return _floor(r * maxsize) % n
 
     _randbelow = _randbelow_with_getrandbits
-
 
     ## --------------------------------------------------------
     ## ---- Methods below this point generate custom distributions
@@ -271,13 +272,11 @@ class Random(_random.Random):
     ## ---- access randomness through the methods:  random(),
     ## ---- getrandbits(), or _randbelow().
 
-
     ## -------------------- bytes methods ---------------------
 
     def randbytes(self, n):
         """Generate n random bytes."""
-        return self.getrandbits(n * 8).to_bytes(n, 'little')
-
+        return self.getrandbits(n * 8).to_bytes(n, "little")
 
     ## -------------------- integer methods  -------------------
 
@@ -296,18 +295,24 @@ class Random(_random.Random):
         except TypeError:
             istart = int(start)
             if istart != start:
-                _warn('randrange() will raise TypeError in the future',
-                      DeprecationWarning, 2)
+                _warn(
+                    "randrange() will raise TypeError in the future",
+                    DeprecationWarning,
+                    2,
+                )
                 raise ValueError("non-integer arg 1 for randrange()")
-            _warn('non-integer arguments to randrange() have been deprecated '
-                  'since Python 3.10 and will be removed in a subsequent '
-                  'version',
-                  DeprecationWarning, 2)
+            _warn(
+                "non-integer arguments to randrange() have been deprecated "
+                "since Python 3.10 and will be removed in a subsequent "
+                "version",
+                DeprecationWarning,
+                2,
+            )
         if stop is None:
             # We don't check for "step != 1" because it hasn't been
             # type checked and converted to an integer yet.
             if step is not _ONE:
-                raise TypeError('Missing a non-None stop argument')
+                raise TypeError("Missing a non-None stop argument")
             if istart > 0:
                 return self._randbelow(istart)
             raise ValueError("empty range for randrange()")
@@ -318,31 +323,45 @@ class Random(_random.Random):
         except TypeError:
             istop = int(stop)
             if istop != stop:
-                _warn('randrange() will raise TypeError in the future',
-                      DeprecationWarning, 2)
+                _warn(
+                    "randrange() will raise TypeError in the future",
+                    DeprecationWarning,
+                    2,
+                )
                 raise ValueError("non-integer stop for randrange()")
-            _warn('non-integer arguments to randrange() have been deprecated '
-                  'since Python 3.10 and will be removed in a subsequent '
-                  'version',
-                  DeprecationWarning, 2)
+            _warn(
+                "non-integer arguments to randrange() have been deprecated "
+                "since Python 3.10 and will be removed in a subsequent "
+                "version",
+                DeprecationWarning,
+                2,
+            )
         width = istop - istart
         try:
             istep = _index(step)
         except TypeError:
             istep = int(step)
             if istep != step:
-                _warn('randrange() will raise TypeError in the future',
-                      DeprecationWarning, 2)
+                _warn(
+                    "randrange() will raise TypeError in the future",
+                    DeprecationWarning,
+                    2,
+                )
                 raise ValueError("non-integer step for randrange()")
-            _warn('non-integer arguments to randrange() have been deprecated '
-                  'since Python 3.10 and will be removed in a subsequent '
-                  'version',
-                  DeprecationWarning, 2)
+            _warn(
+                "non-integer arguments to randrange() have been deprecated "
+                "since Python 3.10 and will be removed in a subsequent "
+                "version",
+                DeprecationWarning,
+                2,
+            )
         # Fast path.
         if istep == 1:
             if width > 0:
                 return istart + self._randbelow(width)
-            raise ValueError("empty range for randrange() (%d, %d, %d)" % (istart, istop, width))
+            raise ValueError(
+                "empty range for randrange() (%d, %d, %d)" % (istart, istop, width)
+            )
 
         # Non-unit step argument supplied.
         if istep > 0:
@@ -356,11 +375,9 @@ class Random(_random.Random):
         return istart + istep * self._randbelow(n)
 
     def randint(self, a, b):
-        """Return random integer in range [a, b], including both end points.
-        """
+        """Return random integer in range [a, b], including both end points."""
 
-        return self.randrange(a, b+1)
-
+        return self.randrange(a, b + 1)
 
     ## -------------------- sequence methods  -------------------
 
@@ -370,7 +387,7 @@ class Random(_random.Random):
         # As an accommodation for NumPy, we don't use "if not seq"
         # because bool(numpy.array()) raises a ValueError.
         if not len(seq):
-            raise IndexError('Cannot choose from an empty sequence')
+            raise IndexError("Cannot choose from an empty sequence")
         return seq[self._randbelow(len(seq))]
 
     def shuffle(self, x):
@@ -436,18 +453,19 @@ class Random(_random.Random):
         # causing them to eat more entropy than necessary.
 
         if not isinstance(population, _Sequence):
-            raise TypeError("Population must be a sequence.  "
-                            "For dicts or sets, use sorted(d).")
+            raise TypeError(
+                "Population must be a sequence.  " "For dicts or sets, use sorted(d)."
+            )
         n = len(population)
         if counts is not None:
             cum_counts = list(_accumulate(counts))
             if len(cum_counts) != n:
-                raise ValueError('The number of counts does not match the population')
+                raise ValueError("The number of counts does not match the population")
             total = cum_counts.pop()
             if not isinstance(total, int):
-                raise TypeError('Counts must be integers')
+                raise TypeError("Counts must be integers")
             if total <= 0:
-                raise ValueError('Total of counts must be greater than zero')
+                raise ValueError("Total of counts must be greater than zero")
             selections = self.sample(range(total), k=k)
             bisect = _bisect
             return [population[bisect(cum_counts, s)] for s in selections]
@@ -455,7 +473,7 @@ class Random(_random.Random):
         if not 0 <= k <= n:
             raise ValueError("Sample larger than population or is negative")
         result = [None] * k
-        setsize = 21        # size of a small set minus size of an empty list
+        setsize = 21  # size of a small set minus size of an empty list
         if k > 5:
             setsize += 4 ** _ceil(_log(k * 3, 4))  # table size for big sets
         if n <= setsize:
@@ -489,7 +507,7 @@ class Random(_random.Random):
         if cum_weights is None:
             if weights is None:
                 floor = _floor
-                n += 0.0    # convert to float for a small speed improvement
+                n += 0.0  # convert to float for a small speed improvement
                 return [population[floor(random() * n)] for i in _repeat(None, k)]
             try:
                 cum_weights = list(_accumulate(weights))
@@ -498,22 +516,23 @@ class Random(_random.Random):
                     raise
                 k = weights
                 raise TypeError(
-                    f'The number of choices must be a keyword argument: {k=}'
+                    f"The number of choices must be a keyword argument: {k=}"
                 ) from None
         elif weights is not None:
-            raise TypeError('Cannot specify both weights and cumulative weights')
+            raise TypeError("Cannot specify both weights and cumulative weights")
         if len(cum_weights) != n:
-            raise ValueError('The number of weights does not match the population')
-        total = cum_weights[-1] + 0.0   # convert to float
+            raise ValueError("The number of weights does not match the population")
+        total = cum_weights[-1] + 0.0  # convert to float
         if total <= 0.0:
-            raise ValueError('Total of weights must be greater than zero')
+            raise ValueError("Total of weights must be greater than zero")
         if not _isfinite(total):
-            raise ValueError('Total of weights must be finite')
+            raise ValueError("Total of weights must be finite")
         bisect = _bisect
         hi = n - 1
-        return [population[bisect(cum_weights, random() * total, 0, hi)]
-                for i in _repeat(None, k)]
-
+        return [
+            population[bisect(cum_weights, random() * total, 0, hi)]
+            for i in _repeat(None, k)
+        ]
 
     ## -------------------- real-valued distributions  -------------------
 
@@ -686,7 +705,7 @@ class Random(_random.Random):
         # Warning: a few older sources define the gamma distribution in terms
         # of alpha > -1.0
         if alpha <= 0.0 or beta <= 0.0:
-            raise ValueError('gammavariate: alpha and beta must be > 0.0')
+            raise ValueError("gammavariate: alpha and beta must be > 0.0")
 
         random = self.random
         if alpha > 1.0:
@@ -800,10 +819,10 @@ class SystemRandom(Random):
     def getrandbits(self, k):
         """getrandbits(k) -> x.  Generates an int with k random bits."""
         if k < 0:
-            raise ValueError('number of bits must be non-negative')
-        numbytes = (k + 7) // 8                       # bits / 8 and rounded up
+            raise ValueError("number of bits must be non-negative")
+        numbytes = (k + 7) // 8  # bits / 8 and rounded up
         x = int.from_bytes(_urandom(numbytes))
-        return x >> (numbytes * 8 - k)                # trim excess bits
+        return x >> (numbytes * 8 - k)  # trim excess bits
 
     def randbytes(self, n):
         """Generate n random bytes."""
@@ -817,7 +836,8 @@ class SystemRandom(Random):
 
     def _notimplemented(self, *args, **kwds):
         "Method should not be called for a system random number generator."
-        raise NotImplementedError('System entropy source does not have state.')
+        raise NotImplementedError("System entropy source does not have state.")
+
     getstate = setstate = _notimplemented
 
 
@@ -857,6 +877,7 @@ randbytes = _inst.randbytes
 ## ------------------------------------------------------
 ## ----------------- test program -----------------------
 
+
 def _test_generator(n, func, args):
     from statistics import stdev, fmean as mean
     from time import perf_counter
@@ -870,8 +891,8 @@ def _test_generator(n, func, args):
     low = min(data)
     high = max(data)
 
-    print(f'{t1 - t0:.3f} sec, {n} times {func.__name__}')
-    print('avg %g, stddev %g, min %g, max %g\n' % (xbar, sigma, low, high))
+    print(f"{t1 - t0:.3f} sec, {n} times {func.__name__}")
+    print("avg %g, stddev %g, min %g, max %g\n" % (xbar, sigma, low, high))
 
 
 def _test(N=2000):
@@ -900,5 +921,5 @@ if hasattr(_os, "fork"):
     _os.register_at_fork(after_in_child=_inst.seed)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _test()

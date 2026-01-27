@@ -50,11 +50,13 @@ __version__ = 1, 7, 0
 
 import difflib, sys
 
+
 def fail(msg):
     out = sys.stderr.write
     out(msg + "\n\n")
     out(__doc__)
     return 0
+
 
 # open a file & return the file object; gripe and return 0 if it
 # couldn't be opened
@@ -64,6 +66,7 @@ def fopen(fname):
     except IOError as detail:
         return fail("couldn't open " + fname + ": " + str(detail))
 
+
 # open two files & spray the diff to stdout; return false iff a problem
 def fcompare(f1name, f2name):
     f1 = fopen(f1name)
@@ -71,18 +74,23 @@ def fcompare(f1name, f2name):
     if not f1 or not f2:
         return 0
 
-    a = f1.readlines(); f1.close()
-    b = f2.readlines(); f2.close()
+    a = f1.readlines()
+    f1.close()
+    b = f2.readlines()
+    f2.close()
     for line in difflib.ndiff(a, b):
-        print(line, end=' ')
+        print(line, end=" ")
 
     return 1
+
 
 # crack args (sys.argv[1:] is normal) & compare;
 # return false iff a problem
 
+
 def main(args):
     import getopt
+
     try:
         opts, args = getopt.getopt(args, "qr:")
     except getopt.error as detail:
@@ -109,25 +117,29 @@ def main(args):
         return fail("need 2 filename args")
     f1name, f2name = args
     if noisy:
-        print('-:', f1name)
-        print('+:', f2name)
+        print("-:", f1name)
+        print("+:", f2name)
     return fcompare(f1name, f2name)
+
 
 # read ndiff output from stdin, and print file1 (which=='1') or
 # file2 (which=='2') to stdout
+
 
 def restore(which):
     restored = difflib.restore(sys.stdin.readlines(), which)
     sys.stdout.writelines(restored)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     args = sys.argv[1:]
     if "-profile" in args:
         import profile, pstats
+
         args.remove("-profile")
         statf = "ndiff.pro"
         profile.run("main(args)", statf)
         stats = pstats.Stats(statf)
-        stats.strip_dirs().sort_stats('time').print_stats()
+        stats.strip_dirs().sort_stats("time").print_stats()
     else:
         main(args)

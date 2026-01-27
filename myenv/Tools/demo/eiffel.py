@@ -9,12 +9,12 @@ An example for Python metaclasses.
 import unittest
 from types import FunctionType as function
 
+
 class EiffelBaseMetaClass(type):
 
     def __new__(meta, name, bases, dict):
         meta.convert_methods(dict)
-        return super(EiffelBaseMetaClass, meta).__new__(
-            meta, name, bases, dict)
+        return super(EiffelBaseMetaClass, meta).__new__(meta, name, bases, dict)
 
     @classmethod
     def convert_methods(cls, dict):
@@ -28,7 +28,7 @@ class EiffelBaseMetaClass(type):
         # find methods with pre or post conditions
         methods = []
         for k, v in dict.items():
-            if k.endswith('_pre') or k.endswith('_post'):
+            if k.endswith("_pre") or k.endswith("_post"):
                 assert isinstance(v, function)
             elif isinstance(v, function):
                 methods.append(k)

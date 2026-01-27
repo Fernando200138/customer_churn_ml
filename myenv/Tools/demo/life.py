@@ -37,7 +37,8 @@ class LifeBoard:
                    versa, and refresh the screen display
 
     """
-    def __init__(self, scr, char=ord('*')):
+
+    def __init__(self, scr, char=ord("*")):
         """Create a new LifeBoard instance.
 
         scr -- curses screen object to use for display
@@ -51,12 +52,12 @@ class LifeBoard:
         self.scr.clear()
 
         # Draw a border around the board
-        border_line = '+' + (self.X * '-') + '+'
+        border_line = "+" + (self.X * "-") + "+"
         self.scr.addstr(0, 0, border_line)
         self.scr.addstr(self.Y + 1, 0, border_line)
         for y in range(0, self.Y):
-            self.scr.addstr(1 + y, 0, '|')
-            self.scr.addstr(1 + y, self.X + 1, '|')
+            self.scr.addstr(1 + y, 0, "|")
+            self.scr.addstr(1 + y, self.X + 1, "|")
         self.scr.refresh()
 
     def set(self, y, x):
@@ -71,7 +72,7 @@ class LifeBoard:
             raise ValueError("Coordinates out of range %i,%i" % (y, x))
         if (x, y) in self.state:
             del self.state[x, y]
-            self.scr.addch(y + 1, x + 1, ' ')
+            self.scr.addch(y + 1, x + 1, " ")
         else:
             self.state[x, y] = 1
             if curses.has_colors():
@@ -95,7 +96,7 @@ class LifeBoard:
                     if (i, j) in self.state:
                         self.scr.addch(j + 1, i + 1, self.char)
                     else:
-                        self.scr.addch(j + 1, i + 1, ' ')
+                        self.scr.addch(j + 1, i + 1, " ")
             self.scr.refresh()
             return
 
@@ -116,8 +117,7 @@ class LifeBoard:
                     d[i, j] = 1
                     if curses.has_colors():
                         # Let's pick a random color!
-                        self.scr.attrset(curses.color_pair(
-                            random.randrange(1, 7)))
+                        self.scr.attrset(curses.color_pair(random.randrange(1, 7)))
                     self.scr.addch(j + 1, i + 1, self.char)
                     self.scr.attrset(0)
                     if not live:
@@ -127,7 +127,7 @@ class LifeBoard:
                     d[i, j] = 1
                 elif live:
                     # Death
-                    self.scr.addch(j + 1, i + 1, ' ')
+                    self.scr.addch(j + 1, i + 1, " ")
                     self.boring = 0
         self.state = d
         self.scr.refresh()
@@ -156,10 +156,14 @@ def display_menu(stdscr, menu_y):
     # If color, then light the menu up :-)
     if curses.has_colors():
         stdscr.attrset(curses.color_pair(1))
-    stdscr.addstr(menu_y, 4,
-        'Use the cursor keys to move, and space or Enter to toggle a cell.')
-    stdscr.addstr(menu_y + 1, 4,
-        'E)rase the board, R)andom fill, S)tep once or C)ontinuously, Q)uit')
+    stdscr.addstr(
+        menu_y, 4, "Use the cursor keys to move, and space or Enter to toggle a cell."
+    )
+    stdscr.addstr(
+        menu_y + 1,
+        4,
+        "E)rase the board, R)andom fill, S)tep once or C)ontinuously, Q)uit",
+    )
     stdscr.attrset(0)
 
 
@@ -185,7 +189,7 @@ def keyloop(stdscr):
 
     # Allocate a subwindow for the Life board and create the board object
     subwin = stdscr.subwin(stdscr_y - 3, stdscr_x, 0, 0)
-    board = LifeBoard(subwin, char=ord('*'))
+    board = LifeBoard(subwin, char=ord("*"))
     board.display(update_board=False)
 
     # xpos, ypos are the cursor's position
@@ -193,16 +197,19 @@ def keyloop(stdscr):
 
     # Main loop:
     while True:
-        stdscr.move(1 + ypos, 1 + xpos)   # Move the cursor
-        c = stdscr.getch()                # Get a keystroke
+        stdscr.move(1 + ypos, 1 + xpos)  # Move the cursor
+        c = stdscr.getch()  # Get a keystroke
         if 0 < c < 256:
             c = chr(c)
-            if c in ' \n':
+            if c in " \n":
                 board.toggle(ypos, xpos)
-            elif c in 'Cc':
+            elif c in "Cc":
                 erase_menu(stdscr, menu_y)
-                stdscr.addstr(menu_y, 6, ' Hit any key to stop continuously '
-                              'updating the screen.')
+                stdscr.addstr(
+                    menu_y,
+                    6,
+                    " Hit any key to stop continuously " "updating the screen.",
+                )
                 stdscr.refresh()
                 # Activate nodelay mode; getch() will return -1
                 # if no keystroke is available, instead of waiting.
@@ -211,23 +218,23 @@ def keyloop(stdscr):
                     c = stdscr.getch()
                     if c != -1:
                         break
-                    stdscr.addstr(0, 0, '/')
+                    stdscr.addstr(0, 0, "/")
                     stdscr.refresh()
                     board.display()
-                    stdscr.addstr(0, 0, '+')
+                    stdscr.addstr(0, 0, "+")
                     stdscr.refresh()
 
-                stdscr.nodelay(0)       # Disable nodelay mode
+                stdscr.nodelay(0)  # Disable nodelay mode
                 display_menu(stdscr, menu_y)
 
-            elif c in 'Ee':
+            elif c in "Ee":
                 board.erase()
-            elif c in 'Qq':
+            elif c in "Qq":
                 break
-            elif c in 'Rr':
+            elif c in "Rr":
                 board.make_random()
                 board.display(update_board=False)
-            elif c in 'Ss':
+            elif c in "Ss":
                 board.display()
             else:
                 # Ignore incorrect keys
@@ -242,8 +249,12 @@ def keyloop(stdscr):
             xpos += 1
         elif c == curses.KEY_MOUSE:
             mouse_id, mouse_x, mouse_y, mouse_z, button_state = curses.getmouse()
-            if (mouse_x > 0 and mouse_x < board.X + 1 and
-                mouse_y > 0 and mouse_y < board.Y + 1):
+            if (
+                mouse_x > 0
+                and mouse_x < board.X + 1
+                and mouse_y > 0
+                and mouse_y < board.Y + 1
+            ):
                 xpos = mouse_x - 1
                 ypos = mouse_y - 1
                 board.toggle(ypos, xpos)
@@ -256,7 +267,8 @@ def keyloop(stdscr):
 
 
 def main(stdscr):
-    keyloop(stdscr)                 # Enter the main loop
+    keyloop(stdscr)  # Enter the main loop
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     curses.wrapper(main)

@@ -128,31 +128,59 @@ import functools
 
 # public symbols
 __all__ = [
-    "match", "fullmatch", "search", "sub", "subn", "split",
-    "findall", "finditer", "compile", "purge", "template", "escape",
-    "error", "Pattern", "Match", "A", "I", "L", "M", "S", "X", "U",
-    "ASCII", "IGNORECASE", "LOCALE", "MULTILINE", "DOTALL", "VERBOSE",
-    "UNICODE", "NOFLAG", "RegexFlag",
+    "match",
+    "fullmatch",
+    "search",
+    "sub",
+    "subn",
+    "split",
+    "findall",
+    "finditer",
+    "compile",
+    "purge",
+    "template",
+    "escape",
+    "error",
+    "Pattern",
+    "Match",
+    "A",
+    "I",
+    "L",
+    "M",
+    "S",
+    "X",
+    "U",
+    "ASCII",
+    "IGNORECASE",
+    "LOCALE",
+    "MULTILINE",
+    "DOTALL",
+    "VERBOSE",
+    "UNICODE",
+    "NOFLAG",
+    "RegexFlag",
 ]
 
 __version__ = "2.2.1"
+
 
 @enum.global_enum
 @enum._simple_enum(enum.IntFlag, boundary=enum.KEEP)
 class RegexFlag:
     NOFLAG = 0
-    ASCII = A = _compiler.SRE_FLAG_ASCII # assume ascii "locale"
-    IGNORECASE = I = _compiler.SRE_FLAG_IGNORECASE # ignore case
-    LOCALE = L = _compiler.SRE_FLAG_LOCALE # assume current 8-bit locale
-    UNICODE = U = _compiler.SRE_FLAG_UNICODE # assume unicode "locale"
-    MULTILINE = M = _compiler.SRE_FLAG_MULTILINE # make anchors look for newline
-    DOTALL = S = _compiler.SRE_FLAG_DOTALL # make dot match newline
-    VERBOSE = X = _compiler.SRE_FLAG_VERBOSE # ignore whitespace and comments
+    ASCII = A = _compiler.SRE_FLAG_ASCII  # assume ascii "locale"
+    IGNORECASE = I = _compiler.SRE_FLAG_IGNORECASE  # ignore case
+    LOCALE = L = _compiler.SRE_FLAG_LOCALE  # assume current 8-bit locale
+    UNICODE = U = _compiler.SRE_FLAG_UNICODE  # assume unicode "locale"
+    MULTILINE = M = _compiler.SRE_FLAG_MULTILINE  # make anchors look for newline
+    DOTALL = S = _compiler.SRE_FLAG_DOTALL  # make dot match newline
+    VERBOSE = X = _compiler.SRE_FLAG_VERBOSE  # ignore whitespace and comments
     # sre extensions (experimental, don't rely on these)
-    TEMPLATE = T = _compiler.SRE_FLAG_TEMPLATE # unknown purpose, deprecated
-    DEBUG = _compiler.SRE_FLAG_DEBUG # dump pattern after compilation
+    TEMPLATE = T = _compiler.SRE_FLAG_TEMPLATE  # unknown purpose, deprecated
+    DEBUG = _compiler.SRE_FLAG_DEBUG  # dump pattern after compilation
     __str__ = object.__str__
     _numeric_repr_ = hex
+
 
 # sre exception
 error = _compiler.error
@@ -160,20 +188,24 @@ error = _compiler.error
 # --------------------------------------------------------------------
 # public interface
 
+
 def match(pattern, string, flags=0):
     """Try to apply the pattern at the start of the string, returning
     a Match object, or None if no match was found."""
     return _compile(pattern, flags).match(string)
+
 
 def fullmatch(pattern, string, flags=0):
     """Try to apply the pattern to all of the string, returning
     a Match object, or None if no match was found."""
     return _compile(pattern, flags).fullmatch(string)
 
+
 def search(pattern, string, flags=0):
     """Scan through string looking for a match to the pattern, returning
     a Match object, or None if no match was found."""
     return _compile(pattern, flags).search(string)
+
 
 def sub(pattern, repl, string, count=0, flags=0):
     """Return the string obtained by replacing the leftmost
@@ -183,6 +215,7 @@ def sub(pattern, repl, string, count=0, flags=0):
     a callable, it's passed the Match object and must return
     a replacement string to be used."""
     return _compile(pattern, flags).sub(repl, string, count)
+
 
 def subn(pattern, repl, string, count=0, flags=0):
     """Return a 2-tuple containing (new_string, number).
@@ -195,6 +228,7 @@ def subn(pattern, repl, string, count=0, flags=0):
     return a replacement string to be used."""
     return _compile(pattern, flags).subn(repl, string, count)
 
+
 def split(pattern, string, maxsplit=0, flags=0):
     """Split the source string by the occurrences of the pattern,
     returning a list containing the resulting substrings.  If
@@ -204,6 +238,7 @@ def split(pattern, string, maxsplit=0, flags=0):
     and the remainder of the string is returned as the final element
     of the list."""
     return _compile(pattern, flags).split(string, maxsplit)
+
 
 def findall(pattern, string, flags=0):
     """Return a list of all non-overlapping matches in the string.
@@ -215,6 +250,7 @@ def findall(pattern, string, flags=0):
     Empty matches are included in the result."""
     return _compile(pattern, flags).findall(string)
 
+
 def finditer(pattern, string, flags=0):
     """Return an iterator over all non-overlapping matches in the
     string.  For each match, the iterator returns a Match object.
@@ -222,33 +258,41 @@ def finditer(pattern, string, flags=0):
     Empty matches are included in the result."""
     return _compile(pattern, flags).finditer(string)
 
+
 def compile(pattern, flags=0):
     "Compile a regular expression pattern, returning a Pattern object."
     return _compile(pattern, flags)
+
 
 def purge():
     "Clear the regular expression caches"
     _cache.clear()
     _compile_repl.cache_clear()
 
+
 def template(pattern, flags=0):
     "Compile a template pattern, returning a Pattern object, deprecated"
     import warnings
-    warnings.warn("The re.template() function is deprecated "
-                  "as it is an undocumented function "
-                  "without an obvious purpose. "
-                  "Use re.compile() instead.",
-                  DeprecationWarning)
+
+    warnings.warn(
+        "The re.template() function is deprecated "
+        "as it is an undocumented function "
+        "without an obvious purpose. "
+        "Use re.compile() instead.",
+        DeprecationWarning,
+    )
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)  # warn just once
-        return _compile(pattern, flags|T)
+        return _compile(pattern, flags | T)
+
 
 # SPECIAL_CHARS
 # closing ')', '}' and ']'
 # '-' (a range in character set)
 # '&', '~', (extended character set operations)
 # '#' (comment) and WHITESPACE (ignored) in verbose mode
-_special_chars_map = {i: '\\' + chr(i) for i in b'()[]{}?*+-|^$\\.&~# \t\n\r\v\f'}
+_special_chars_map = {i: "\\" + chr(i) for i in b"()[]{}?*+-|^$\\.&~# \t\n\r\v\f"}
+
 
 def escape(pattern):
     """
@@ -257,11 +301,12 @@ def escape(pattern):
     if isinstance(pattern, str):
         return pattern.translate(_special_chars_map)
     else:
-        pattern = str(pattern, 'latin1')
-        return pattern.translate(_special_chars_map).encode('latin1')
+        pattern = str(pattern, "latin1")
+        return pattern.translate(_special_chars_map).encode("latin1")
 
-Pattern = type(_compiler.compile('', 0))
-Match = type(_compiler.compile('', 0).match(''))
+
+Pattern = type(_compiler.compile("", 0))
+Match = type(_compiler.compile("", 0).match(""))
 
 # --------------------------------------------------------------------
 # internals
@@ -269,6 +314,8 @@ Match = type(_compiler.compile('', 0).match(''))
 _cache = {}  # ordered!
 
 _MAXCACHE = 512
+
+
 def _compile(pattern, flags):
     # internal: compile pattern
     if isinstance(flags, RegexFlag):
@@ -279,18 +326,20 @@ def _compile(pattern, flags):
         pass
     if isinstance(pattern, Pattern):
         if flags:
-            raise ValueError(
-                "cannot process flags argument with a compiled pattern")
+            raise ValueError("cannot process flags argument with a compiled pattern")
         return pattern
     if not _compiler.isstring(pattern):
         raise TypeError("first argument must be string or compiled pattern")
     if flags & T:
         import warnings
-        warnings.warn("The re.TEMPLATE/re.T flag is deprecated "
-                  "as it is an undocumented flag "
-                  "without an obvious purpose. "
-                  "Don't use it.",
-                  DeprecationWarning)
+
+        warnings.warn(
+            "The re.TEMPLATE/re.T flag is deprecated "
+            "as it is an undocumented flag "
+            "without an obvious purpose. "
+            "Don't use it.",
+            DeprecationWarning,
+        )
     p = _compiler.compile(pattern, flags)
     if not (flags & DEBUG):
         if len(_cache) >= _MAXCACHE:
@@ -302,15 +351,18 @@ def _compile(pattern, flags):
         _cache[type(pattern), pattern, flags] = p
     return p
 
+
 @functools.lru_cache(_MAXCACHE)
 def _compile_repl(repl, pattern):
     # internal: compile replacement pattern
     return _parser.parse_template(repl, pattern)
 
+
 def _expand(pattern, match, template):
     # internal: Match.expand implementation hook
     template = _parser.parse_template(template, pattern)
     return _parser.expand_template(template, match)
+
 
 def _subx(pattern, template):
     # internal: Pattern.sub/subn implementation helper
@@ -318,25 +370,32 @@ def _subx(pattern, template):
     if not template[0] and len(template[1]) == 1:
         # literal replacement
         return template[1][0]
+
     def filter(match, template=template):
         return _parser.expand_template(template, match)
+
     return filter
+
 
 # register myself for pickling
 
 import copyreg
 
+
 def _pickle(p):
     return _compile, (p.pattern, p.flags)
+
 
 copyreg.pickle(Pattern, _pickle, _compile)
 
 # --------------------------------------------------------------------
 # experimental stuff (see python-dev discussions for details)
 
+
 class Scanner:
     def __init__(self, lexicon, flags=0):
         from ._constants import BRANCH, SUBPATTERN
+
         if isinstance(flags, RegexFlag):
             flags = flags.value
         self.lexicon = lexicon
@@ -346,12 +405,18 @@ class Scanner:
         s.flags = flags
         for phrase, action in lexicon:
             gid = s.opengroup()
-            p.append(_parser.SubPattern(s, [
-                (SUBPATTERN, (gid, 0, 0, _parser.parse(phrase, flags))),
-                ]))
+            p.append(
+                _parser.SubPattern(
+                    s,
+                    [
+                        (SUBPATTERN, (gid, 0, 0, _parser.parse(phrase, flags))),
+                    ],
+                )
+            )
             s.closegroup(gid, p[-1])
         p = _parser.SubPattern(s, [(BRANCH, (None, p))])
         self.scanner = _compiler.compile(p)
+
     def scan(self, string):
         result = []
         append = result.append
@@ -364,7 +429,7 @@ class Scanner:
             j = m.end()
             if i == j:
                 break
-            action = self.lexicon[m.lastindex-1][1]
+            action = self.lexicon[m.lastindex - 1][1]
             if callable(action):
                 self.match = m
                 action = action(self, m.group())

@@ -4,6 +4,7 @@
 A demonstration of classes and their special methods in Python.
 """
 
+
 class Vec:
     """A simple vector class.
 
@@ -50,12 +51,12 @@ class Vec:
         return inst
 
     def __repr__(self):
-        args = ', '.join([repr(x) for x in self.v])
-        return f'{type(self).__name__}({args})'
+        args = ", ".join([repr(x) for x in self.v])
+        return f"{type(self).__name__}({args})"
 
     def __str__(self):
-        components = ' '.join([str(x) for x in self.v])
-        return f'<{components}>'
+        components = " ".join([str(x) for x in self.v])
+        return f"<{components}>"
 
     def __len__(self):
         return len(self.v)
@@ -89,6 +90,8 @@ class Vec:
 
 def test():
     import doctest
+
     doctest.testmod()
+
 
 test()

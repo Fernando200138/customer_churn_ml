@@ -10,9 +10,9 @@ from distutils import sysconfig
 from distutils.tests import support
 
 
-class BuildScriptsTestCase(support.TempdirManager,
-                           support.LoggingSilencer,
-                           unittest.TestCase):
+class BuildScriptsTestCase(
+    support.TempdirManager, support.LoggingSilencer, unittest.TestCase
+):
 
     def test_default_settings(self):
         cmd = self.get_build_scripts_cmd("/foo/bar", [])
@@ -29,9 +29,9 @@ class BuildScriptsTestCase(support.TempdirManager,
         target = self.mkdtemp()
         expected = self.write_sample_scripts(source)
 
-        cmd = self.get_build_scripts_cmd(target,
-                                         [os.path.join(source, fn)
-                                          for fn in expected])
+        cmd = self.get_build_scripts_cmd(
+            target, [os.path.join(source, fn) for fn in expected]
+        )
         cmd.finalize_options()
         cmd.run()
 
@@ -41,32 +41,38 @@ class BuildScriptsTestCase(support.TempdirManager,
 
     def get_build_scripts_cmd(self, target, scripts):
         import sys
+
         dist = Distribution()
         dist.scripts = scripts
         dist.command_obj["build"] = support.DummyCommand(
-            build_scripts=target,
-            force=1,
-            executable=sys.executable
-            )
+            build_scripts=target, force=1, executable=sys.executable
+        )
         return build_scripts(dist)
 
     def write_sample_scripts(self, dir):
         expected = []
         expected.append("script1.py")
-        self.write_script(dir, "script1.py",
-                          ("#! /usr/bin/env python2.3\n"
-                           "# bogus script w/ Python sh-bang\n"
-                           "pass\n"))
+        self.write_script(
+            dir,
+            "script1.py",
+            (
+                "#! /usr/bin/env python2.3\n"
+                "# bogus script w/ Python sh-bang\n"
+                "pass\n"
+            ),
+        )
         expected.append("script2.py")
-        self.write_script(dir, "script2.py",
-                          ("#!/usr/bin/python\n"
-                           "# bogus script w/ Python sh-bang\n"
-                           "pass\n"))
+        self.write_script(
+            dir,
+            "script2.py",
+            ("#!/usr/bin/python\n" "# bogus script w/ Python sh-bang\n" "pass\n"),
+        )
         expected.append("shell.sh")
-        self.write_script(dir, "shell.sh",
-                          ("#!/bin/sh\n"
-                           "# bogus shell script w/ sh-bang\n"
-                           "exit 0\n"))
+        self.write_script(
+            dir,
+            "shell.sh",
+            ("#!/bin/sh\n" "# bogus shell script w/ sh-bang\n" "exit 0\n"),
+        )
         return expected
 
     def write_script(self, dir, name, text):
@@ -81,10 +87,9 @@ class BuildScriptsTestCase(support.TempdirManager,
         target = self.mkdtemp()
         expected = self.write_sample_scripts(source)
 
-
-        cmd = self.get_build_scripts_cmd(target,
-                                         [os.path.join(source, fn)
-                                          for fn in expected])
+        cmd = self.get_build_scripts_cmd(
+            target, [os.path.join(source, fn) for fn in expected]
+        )
         cmd.finalize_options()
 
         # http://bugs.python.org/issue4524
@@ -92,17 +97,18 @@ class BuildScriptsTestCase(support.TempdirManager,
         # On linux-g++-32 with command line `./configure --enable-ipv6
         # --with-suffix=3`, python is compiled okay but the build scripts
         # failed when writing the name of the executable
-        old = sysconfig.get_config_vars().get('VERSION')
-        sysconfig._config_vars['VERSION'] = 4
+        old = sysconfig.get_config_vars().get("VERSION")
+        sysconfig._config_vars["VERSION"] = 4
         try:
             cmd.run()
         finally:
             if old is not None:
-                sysconfig._config_vars['VERSION'] = old
+                sysconfig._config_vars["VERSION"] = old
 
         built = os.listdir(target)
         for name in expected:
             self.assertIn(name, built)
+
 
 if __name__ == "__main__":
     unittest.main()

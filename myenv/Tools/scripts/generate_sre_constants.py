@@ -4,14 +4,15 @@
 
 def update_file(file, content):
     try:
-        with open(file, 'r') as fobj:
+        with open(file, "r") as fobj:
             if fobj.read() == content:
                 return False
     except (OSError, ValueError):
         pass
-    with open(file, 'w') as fobj:
+    with open(file, "w") as fobj:
         fobj.write(content)
     return True
+
 
 sre_constants_header = """\
 /*
@@ -29,6 +30,7 @@ sre_constants_header = """\
 
 """
 
+
 def main(
     infile="Lib/re/_constants.py",
     outfile_constants="Modules/_sre/sre_constants.h",
@@ -45,8 +47,7 @@ def main(
             yield "#define %s_%s %d\n" % (prefix, item, item)
 
     def dump2(d, prefix):
-        items = [(value, name) for name, value in d.items()
-                 if name.startswith(prefix)]
+        items = [(value, name) for name, value in d.items() if name.startswith(prefix)]
         for value, name in sorted(items):
             yield "#define %s %d\n" % (name, value)
 
@@ -63,16 +64,17 @@ def main(
     content.extend(dump2(ns, "SRE_FLAG_"))
     content.extend(dump2(ns, "SRE_INFO_"))
 
-    update_file(outfile_constants, ''.join(content))
+    update_file(outfile_constants, "".join(content))
 
     content = [sre_constants_header]
     content.append(f"static void *sre_targets[{len(ns['OPCODES'])}] = {{\n")
     content.extend(dump_gotos(ns["OPCODES"], "TARGET_SRE_OP"))
     content.append("};\n")
 
-    update_file(outfile_targets, ''.join(content))
+    update_file(outfile_targets, "".join(content))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
+
     main(*sys.argv[1:])

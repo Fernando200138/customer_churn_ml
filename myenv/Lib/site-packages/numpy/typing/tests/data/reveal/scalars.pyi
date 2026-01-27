@@ -114,7 +114,9 @@ assert_type(b.reshape(1), np.ndarray[tuple[_1], np.dtype[np.bool]])
 assert_type(i8.reshape(-1), np.ndarray[tuple[_1], np.dtype[np.int64]])
 assert_type(u8.reshape(1, 1), np.ndarray[tuple[_1, _1], np.dtype[np.uint64]])
 assert_type(f8.reshape(1, -1), np.ndarray[tuple[_1, _1], np.dtype[np.float64]])
-assert_type(c16.reshape(1, 1, 1), np.ndarray[tuple[_1, _1, _1], np.dtype[np.complex128]])
+assert_type(
+    c16.reshape(1, 1, 1), np.ndarray[tuple[_1, _1, _1], np.dtype[np.complex128]]
+)
 assert_type(U.reshape(1, 1, 1, 1), np.ndarray[tuple[_1, _1, _1, _1], np.dtype[np.str_]])
 assert_type(
     S.reshape(1, 1, 1, 1, 1),

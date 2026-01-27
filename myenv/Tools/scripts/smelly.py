@@ -7,13 +7,13 @@ import sys
 import sysconfig
 
 
-ALLOWED_PREFIXES = ('Py', '_Py')
-if sys.platform == 'darwin':
-    ALLOWED_PREFIXES += ('__Py',)
+ALLOWED_PREFIXES = ("Py", "_Py")
+if sys.platform == "darwin":
+    ALLOWED_PREFIXES += ("__Py",)
 
 IGNORED_EXTENSION = "_ctypes_test"
 # Ignore constructor and destructor functions
-IGNORED_SYMBOLS = {'_init', '_fini'}
+IGNORED_SYMBOLS = {"_init", "_fini"}
 
 
 def is_local_symbol_type(symtype):
@@ -38,11 +38,11 @@ def get_exported_symbols(library, dynamic=False):
     print(f"Check that {library} only exports symbols starting with Py or _Py")
 
     # Only look at dynamic symbols
-    args = ['nm', '--no-sort']
+    args = ["nm", "--no-sort"]
     if dynamic:
-        args.append('--dynamic')
+        args.append("--dynamic")
     args.append(library)
-    print("+ %s" % ' '.join(args))
+    print("+ %s" % " ".join(args))
     proc = subprocess.run(args, stdout=subprocess.PIPE, universal_newlines=True)
     if proc.returncode:
         sys.stdout.write(proc.stdout)
@@ -70,7 +70,7 @@ def get_smelly_symbols(stdout):
 
         symtype = parts[1].strip()
         symbol = parts[-1]
-        result = '%s (type: %s)' % (symbol, symtype)
+        result = "%s (type: %s)" % (symbol, symtype)
 
         if symbol.startswith(ALLOWED_PREFIXES):
             python_symbols.append(result)
@@ -142,14 +142,14 @@ def main():
     nsymbol = 0
 
     # static library
-    LIBRARY = sysconfig.get_config_var('LIBRARY')
+    LIBRARY = sysconfig.get_config_var("LIBRARY")
     if not LIBRARY:
         raise Exception("failed to get LIBRARY variable from sysconfig")
     if os.path.exists(LIBRARY):
         nsymbol += check_library(LIBRARY)
 
     # dynamic library
-    LDLIBRARY = sysconfig.get_config_var('LDLIBRARY')
+    LDLIBRARY = sysconfig.get_config_var("LDLIBRARY")
     if not LDLIBRARY:
         raise Exception("failed to get LDLIBRARY variable from sysconfig")
     if LDLIBRARY != LIBRARY:
@@ -165,8 +165,10 @@ def main():
         sys.exit(1)
 
     print()
-    print(f"OK: all exported symbols of all libraries "
-          f"are prefixed with {' or '.join(map(repr, ALLOWED_PREFIXES))}")
+    print(
+        f"OK: all exported symbols of all libraries "
+        f"are prefixed with {' or '.join(map(repr, ALLOWED_PREFIXES))}"
+    )
 
 
 if __name__ == "__main__":

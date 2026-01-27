@@ -5,19 +5,22 @@ import sys
 import argparse
 from pprint import pprint
 
+
 def _dump_state(args):
     print(sys.version)
     for name in args.attributes:
         print("sys.{}:".format(name))
         pprint(getattr(sys, name))
 
-def _add_dump_args(cmd):
-    cmd.add_argument("attributes", metavar="ATTR", nargs="+",
-                     help="sys module attribute to display")
 
-COMMANDS = (
-  ("dump", "Dump import state", _dump_state, _add_dump_args),
-)
+def _add_dump_args(cmd):
+    cmd.add_argument(
+        "attributes", metavar="ATTR", nargs="+", help="sys module attribute to display"
+    )
+
+
+COMMANDS = (("dump", "Dump import state", _dump_state, _add_dump_args),)
+
 
 def _make_parser():
     parser = argparse.ArgumentParser()
@@ -28,10 +31,12 @@ def _make_parser():
         add_args(cmd)
     return parser
 
+
 def main(args):
     parser = _make_parser()
     args = parser.parse_args(args)
     return args.command(args)
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

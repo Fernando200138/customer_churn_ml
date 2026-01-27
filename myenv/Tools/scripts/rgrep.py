@@ -15,7 +15,7 @@ def main():
     reflags = 0
     opts, args = getopt.getopt(sys.argv[1:], "i")
     for o, a in opts:
-        if o == '-i':
+        if o == "-i":
             reflags = reflags | re.IGNORECASE
     if len(args) < 2:
         usage("not enough arguments")
@@ -63,5 +63,5 @@ def usage(msg, code=2):
     sys.exit(code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

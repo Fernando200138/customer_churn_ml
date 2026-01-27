@@ -10,25 +10,28 @@ from stat import *
 
 join = os.path.join
 
-error = 'mkreal error'
+error = "mkreal error"
 
-BUFSIZE = 32*1024
+BUFSIZE = 32 * 1024
+
 
 def mkrealfile(name):
-    st = os.stat(name) # Get the mode
+    st = os.stat(name)  # Get the mode
     mode = S_IMODE(st[ST_MODE])
-    linkto = os.readlink(name) # Make sure again it's a symlink
-    with open(name, 'rb') as f_in: # This ensures it's a file
+    linkto = os.readlink(name)  # Make sure again it's a symlink
+    with open(name, "rb") as f_in:  # This ensures it's a file
         os.unlink(name)
-        with open(name, 'wb') as f_out:
+        with open(name, "wb") as f_out:
             while 1:
                 buf = f_in.read(BUFSIZE)
-                if not buf: break
+                if not buf:
+                    break
                 f_out.write(buf)
     os.chmod(name, mode)
 
+
 def mkrealdir(name):
-    st = os.stat(name) # Get the mode
+    st = os.stat(name)  # Get the mode
     mode = S_IMODE(st[ST_MODE])
     linkto = os.readlink(name)
     files = os.listdir(name)
@@ -41,18 +44,20 @@ def mkrealdir(name):
         if filename not in (os.curdir, os.pardir):
             os.symlink(join(linkto, filename), join(name, filename))
 
+
 def main():
     sys.stdout = sys.stderr
     progname = os.path.basename(sys.argv[0])
-    if progname == '-c': progname = 'mkreal'
+    if progname == "-c":
+        progname = "mkreal"
     args = sys.argv[1:]
     if not args:
-        print('usage:', progname, 'path ...')
+        print("usage:", progname, "path ...")
         sys.exit(2)
     status = 0
     for name in args:
         if not os.path.islink(name):
-            print(progname+':', name+':', 'not a symlink')
+            print(progname + ":", name + ":", "not a symlink")
             status = 1
         else:
             if os.path.isdir(name):
@@ -61,5 +66,6 @@ def main():
                 mkrealfile(name)
     sys.exit(status)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

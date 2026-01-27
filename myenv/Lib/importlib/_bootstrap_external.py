@@ -6,6 +6,7 @@ such it requires the injection of specific modules and attributes in order to
 work. One should use importlib as the public-facing version of this module.
 
 """
+
 # IMPORTANT: Whenever making changes to this module, be sure to run a top-level
 # `make regen-importlib` followed by `make` in order to get the frozen version
 # of the module updated. Not doing so will result in the Makefile to fail for
@@ -30,7 +31,7 @@ import _warnings
 import marshal
 
 
-_MS_WINDOWS = (sys.platform == 'win32')
+_MS_WINDOWS = sys.platform == "win32"
 if _MS_WINDOWS:
     import nt as _os
     import winreg
@@ -39,60 +40,67 @@ else:
 
 
 if _MS_WINDOWS:
-    path_separators = ['\\', '/']
+    path_separators = ["\\", "/"]
 else:
-    path_separators = ['/']
+    path_separators = ["/"]
 # Assumption made in _path_join()
 assert all(len(sep) == 1 for sep in path_separators)
 path_sep = path_separators[0]
 path_sep_tuple = tuple(path_separators)
-path_separators = ''.join(path_separators)
-_pathseps_with_colon = {f':{s}' for s in path_separators}
+path_separators = "".join(path_separators)
+_pathseps_with_colon = {f":{s}" for s in path_separators}
 
 
 # Bootstrap-related code ######################################################
-_CASE_INSENSITIVE_PLATFORMS_STR_KEY = 'win',
-_CASE_INSENSITIVE_PLATFORMS_BYTES_KEY = 'cygwin', 'darwin'
-_CASE_INSENSITIVE_PLATFORMS =  (_CASE_INSENSITIVE_PLATFORMS_BYTES_KEY
-                                + _CASE_INSENSITIVE_PLATFORMS_STR_KEY)
+_CASE_INSENSITIVE_PLATFORMS_STR_KEY = ("win",)
+_CASE_INSENSITIVE_PLATFORMS_BYTES_KEY = "cygwin", "darwin"
+_CASE_INSENSITIVE_PLATFORMS = (
+    _CASE_INSENSITIVE_PLATFORMS_BYTES_KEY + _CASE_INSENSITIVE_PLATFORMS_STR_KEY
+)
 
 
 def _make_relax_case():
     if sys.platform.startswith(_CASE_INSENSITIVE_PLATFORMS):
         if sys.platform.startswith(_CASE_INSENSITIVE_PLATFORMS_STR_KEY):
-            key = 'PYTHONCASEOK'
+            key = "PYTHONCASEOK"
         else:
-            key = b'PYTHONCASEOK'
+            key = b"PYTHONCASEOK"
 
         def _relax_case():
             """True if filenames must be checked case-insensitively and ignore environment flags are not set."""
             return not sys.flags.ignore_environment and key in _os.environ
+
     else:
+
         def _relax_case():
             """True if filenames must be checked case-insensitively."""
             return False
+
     return _relax_case
+
 
 _relax_case = _make_relax_case()
 
 
 def _pack_uint32(x):
     """Convert a 32-bit integer to little-endian."""
-    return (int(x) & 0xFFFFFFFF).to_bytes(4, 'little')
+    return (int(x) & 0xFFFFFFFF).to_bytes(4, "little")
 
 
 def _unpack_uint32(data):
     """Convert 4 bytes in little-endian to an integer."""
     assert len(data) == 4
-    return int.from_bytes(data, 'little')
+    return int.from_bytes(data, "little")
+
 
 def _unpack_uint16(data):
     """Convert 2 bytes in little-endian to an integer."""
     assert len(data) == 2
-    return int.from_bytes(data, 'little')
+    return int.from_bytes(data, "little")
 
 
 if _MS_WINDOWS:
+
     def _path_join(*path_parts):
         """Replacement for os.path.join()."""
         if not path_parts:
@@ -105,7 +113,7 @@ if _MS_WINDOWS:
             if new_root.startswith(path_sep_tuple) or new_root.endswith(path_sep_tuple):
                 root = new_root.rstrip(path_separators) or root
                 path = [path_sep + tail]
-            elif new_root.endswith(':'):
+            elif new_root.endswith(":"):
                 if root.casefold() != new_root.casefold():
                     # Drive relative paths have to be resolved by the OS, so we reset the
                     # tail but do not add a path_sep prefix.
@@ -123,18 +131,20 @@ if _MS_WINDOWS:
         return root + path_sep.join(path)
 
 else:
+
     def _path_join(*path_parts):
         """Replacement for os.path.join()."""
-        return path_sep.join([part.rstrip(path_separators)
-                              for part in path_parts if part])
+        return path_sep.join(
+            [part.rstrip(path_separators) for part in path_parts if part]
+        )
 
 
 def _path_split(path):
     """Replacement for os.path.split()."""
     i = max(path.rfind(p) for p in path_separators)
     if i < 0:
-        return '', path
-    return path[:i], path[i + 1:]
+        return "", path
+    return path[:i], path[i + 1 :]
 
 
 def _path_stat(path):
@@ -169,14 +179,16 @@ def _path_isdir(path):
 
 
 if _MS_WINDOWS:
+
     def _path_isabs(path):
         """Replacement for os.path.isabs."""
         if not path:
             return False
-        root = _os._path_splitroot(path)[0].replace('/', '\\')
-        return len(root) > 1 and (root.startswith('\\\\') or root.endswith('\\'))
+        root = _os._path_splitroot(path)[0].replace("/", "\\")
+        return len(root) > 1 and (root.startswith("\\\\") or root.endswith("\\"))
 
 else:
+
     def _path_isabs(path):
         """Replacement for os.path.isabs."""
         return path.startswith(path_separators)
@@ -187,13 +199,12 @@ def _write_atomic(path, data, mode=0o666):
     Be prepared to handle a FileExistsError if concurrent writing of the
     temporary file is attempted."""
     # id() is used to generate a pseudo-random filename.
-    path_tmp = '{}.{}'.format(path, id(path))
-    fd = _os.open(path_tmp,
-                  _os.O_EXCL | _os.O_CREAT | _os.O_WRONLY, mode & 0o666)
+    path_tmp = "{}.{}".format(path, id(path))
+    fd = _os.open(path_tmp, _os.O_EXCL | _os.O_CREAT | _os.O_WRONLY, mode & 0o666)
     try:
         # We first write data to a temporary file, and then use os.replace() to
         # perform an atomic rename.
-        with _io.FileIO(fd, 'wb') as file:
+        with _io.FileIO(fd, "wb") as file:
             file.write(data)
         _os.replace(path_tmp, path)
     except OSError:
@@ -278,12 +289,12 @@ _code_type = type(_write_atomic.__code__)
 #                    3103 (__file__ points to source file)
 #     Python 3.0a4: 3111 (WITH_CLEANUP optimization).
 #     Python 3.0b1: 3131 (lexical exception stacking, including POP_EXCEPT
-                          #3021)
+# 3021)
 #     Python 3.1a1: 3141 (optimize list, set and dict comprehensions:
 #                         change LIST_APPEND and SET_ADD, add MAP_ADD #2183)
 #     Python 3.1a1: 3151 (optimize conditional branches:
 #                         introduce POP_JUMP_IF_FALSE and POP_JUMP_IF_TRUE
-                          #4715)
+# 4715)
 #     Python 3.2a1: 3160 (add SETUP_WITH #6101)
 #                   tag: cpython-32
 #     Python 3.2a2: 3170 (add DUP_TOP_TWO, remove DUP_TOPX and ROT_FOUR #9225)
@@ -318,7 +329,7 @@ _code_type = type(_write_atomic.__code__)
 #     Python 3.6b1  3375 (add SETUP_ANNOTATIONS and STORE_ANNOTATION opcodes
 #                         #27985)
 #     Python 3.6b1  3376 (simplify CALL_FUNCTIONs & BUILD_MAP_UNPACK_WITH_CALL
-                          #27213)
+# 27213)
 #     Python 3.6b1  3377 (set __class__ cell from type.__new__ #23722)
 #     Python 3.6b2  3378 (add BUILD_TUPLE_UNPACK_WITH_CALL #28257)
 #     Python 3.6rc1 3379 (more thorough __class__ validation #23722)
@@ -417,22 +428,23 @@ _code_type = type(_write_atomic.__code__)
 # Whenever MAGIC_NUMBER is changed, the ranges in the magic_values array
 # in PC/launcher.c must also be updated.
 
-MAGIC_NUMBER = (3495).to_bytes(2, 'little') + b'\r\n'
+MAGIC_NUMBER = (3495).to_bytes(2, "little") + b"\r\n"
 
-_RAW_MAGIC_NUMBER = int.from_bytes(MAGIC_NUMBER, 'little')  # For import.c
+_RAW_MAGIC_NUMBER = int.from_bytes(MAGIC_NUMBER, "little")  # For import.c
 
-_PYCACHE = '__pycache__'
-_OPT = 'opt-'
+_PYCACHE = "__pycache__"
+_OPT = "opt-"
 
-SOURCE_SUFFIXES = ['.py']
+SOURCE_SUFFIXES = [".py"]
 if _MS_WINDOWS:
-    SOURCE_SUFFIXES.append('.pyw')
+    SOURCE_SUFFIXES.append(".pyw")
 
 EXTENSION_SUFFIXES = _imp.extension_suffixes()
 
-BYTECODE_SUFFIXES = ['.pyc']
+BYTECODE_SUFFIXES = [".pyc"]
 # Deprecated.
 DEBUG_BYTECODE_SUFFIXES = OPTIMIZED_BYTECODE_SUFFIXES = BYTECODE_SUFFIXES
+
 
 def cache_from_source(path, debug_override=None, *, optimization=None):
     """Given the path to a .py file, return the path to its .pyc file.
@@ -453,29 +465,31 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
 
     """
     if debug_override is not None:
-        _warnings.warn('the debug_override parameter is deprecated; use '
-                       "'optimization' instead", DeprecationWarning)
+        _warnings.warn(
+            "the debug_override parameter is deprecated; use " "'optimization' instead",
+            DeprecationWarning,
+        )
         if optimization is not None:
-            message = 'debug_override or optimization must be set to None'
+            message = "debug_override or optimization must be set to None"
             raise TypeError(message)
-        optimization = '' if debug_override else 1
+        optimization = "" if debug_override else 1
     path = _os.fspath(path)
     head, tail = _path_split(path)
-    base, sep, rest = tail.rpartition('.')
+    base, sep, rest = tail.rpartition(".")
     tag = sys.implementation.cache_tag
     if tag is None:
-        raise NotImplementedError('sys.implementation.cache_tag is None')
-    almost_filename = ''.join([(base if base else rest), sep, tag])
+        raise NotImplementedError("sys.implementation.cache_tag is None")
+    almost_filename = "".join([(base if base else rest), sep, tag])
     if optimization is None:
         if sys.flags.optimize == 0:
-            optimization = ''
+            optimization = ""
         else:
             optimization = sys.flags.optimize
     optimization = str(optimization)
-    if optimization != '':
+    if optimization != "":
         if not optimization.isalnum():
-            raise ValueError('{!r} is not alphanumeric'.format(optimization))
-        almost_filename = '{}.{}{}'.format(almost_filename, _OPT, optimization)
+            raise ValueError("{!r} is not alphanumeric".format(optimization))
+        almost_filename = "{}.{}{}".format(almost_filename, _OPT, optimization)
     filename = almost_filename + BYTECODE_SUFFIXES[0]
     if sys.pycache_prefix is not None:
         # We need an absolute path to the py file to avoid the possibility of
@@ -492,7 +506,7 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
         # Strip initial drive from a Windows path. We know we have an absolute
         # path here, so the second part of the check rules out a POSIX path that
         # happens to contain a colon at the second character.
-        if head[1] == ':' and head[0] not in path_separators:
+        if head[1] == ":" and head[0] not in path_separators:
             head = head[2:]
 
         # Strip initial path separator from `head` to complete the conversion
@@ -515,33 +529,34 @@ def source_from_cache(path):
 
     """
     if sys.implementation.cache_tag is None:
-        raise NotImplementedError('sys.implementation.cache_tag is None')
+        raise NotImplementedError("sys.implementation.cache_tag is None")
     path = _os.fspath(path)
     head, pycache_filename = _path_split(path)
     found_in_pycache_prefix = False
     if sys.pycache_prefix is not None:
         stripped_path = sys.pycache_prefix.rstrip(path_separators)
         if head.startswith(stripped_path + path_sep):
-            head = head[len(stripped_path):]
+            head = head[len(stripped_path) :]
             found_in_pycache_prefix = True
     if not found_in_pycache_prefix:
         head, pycache = _path_split(head)
         if pycache != _PYCACHE:
-            raise ValueError(f'{_PYCACHE} not bottom-level directory in '
-                             f'{path!r}')
-    dot_count = pycache_filename.count('.')
+            raise ValueError(f"{_PYCACHE} not bottom-level directory in " f"{path!r}")
+    dot_count = pycache_filename.count(".")
     if dot_count not in {2, 3}:
-        raise ValueError(f'expected only 2 or 3 dots in {pycache_filename!r}')
+        raise ValueError(f"expected only 2 or 3 dots in {pycache_filename!r}")
     elif dot_count == 3:
-        optimization = pycache_filename.rsplit('.', 2)[-2]
+        optimization = pycache_filename.rsplit(".", 2)[-2]
         if not optimization.startswith(_OPT):
-            raise ValueError("optimization portion of filename does not start "
-                             f"with {_OPT!r}")
-        opt_level = optimization[len(_OPT):]
+            raise ValueError(
+                "optimization portion of filename does not start " f"with {_OPT!r}"
+            )
+        opt_level = optimization[len(_OPT) :]
         if not opt_level.isalnum():
-            raise ValueError(f"optimization level {optimization!r} is not an "
-                             "alphanumeric value")
-    base_filename = pycache_filename.partition('.')[0]
+            raise ValueError(
+                f"optimization level {optimization!r} is not an " "alphanumeric value"
+            )
+    base_filename = pycache_filename.partition(".")[0]
     return _path_join(head, base_filename + SOURCE_SUFFIXES[0])
 
 
@@ -554,8 +569,8 @@ def _get_sourcefile(bytecode_path):
     """
     if len(bytecode_path) == 0:
         return None
-    rest, _, extension = bytecode_path.rpartition('.')
-    if not rest or extension.lower()[-3:-1] != 'py':
+    rest, _, extension = bytecode_path.rpartition(".")
+    if not rest or extension.lower()[-3:-1] != "py":
         return bytecode_path
     try:
         source_path = source_from_cache(bytecode_path)
@@ -596,12 +611,14 @@ def _check_name(method):
     compared against. If the comparison fails then ImportError is raised.
 
     """
+
     def _check_name_wrapper(self, name=None, *args, **kwargs):
         if name is None:
             name = self.name
         elif self.name != name:
-            raise ImportError('loader for %s cannot handle %s' %
-                                (self.name, name), name=name)
+            raise ImportError(
+                "loader for %s cannot handle %s" % (self.name, name), name=name
+            )
         return method(self, name, *args, **kwargs)
 
     # FIXME: @_check_name is used to define class methods before the
@@ -609,8 +626,9 @@ def _check_name(method):
     if _bootstrap is not None:
         _wrap = _bootstrap._wrap
     else:
+
         def _wrap(new, old):
-            for replace in ['__module__', '__name__', '__qualname__', '__doc__']:
+            for replace in ["__module__", "__name__", "__qualname__", "__doc__"]:
                 if hasattr(old, replace):
                     setattr(new, replace, getattr(old, replace))
             new.__dict__.update(old.__dict__)
@@ -626,15 +644,17 @@ def _find_module_shim(self, fullname):
     This method is deprecated in favor of finder.find_spec().
 
     """
-    _warnings.warn("find_module() is deprecated and "
-                   "slated for removal in Python 3.12; use find_spec() instead",
-                   DeprecationWarning)
+    _warnings.warn(
+        "find_module() is deprecated and "
+        "slated for removal in Python 3.12; use find_spec() instead",
+        DeprecationWarning,
+    )
     # Call find_loader(). If it returns a string (indicating this
     # is a namespace package portion), generate a warning and
     # return None.
     loader, portions = self.find_loader(fullname)
     if loader is None and len(portions):
-        msg = 'Not importing directory {}: missing __init__'
+        msg = "Not importing directory {}: missing __init__"
         _warnings.warn(msg.format(portions[0]), ImportWarning)
     return loader
 
@@ -657,23 +677,22 @@ def _classify_pyc(data, name, exc_details):
     """
     magic = data[:4]
     if magic != MAGIC_NUMBER:
-        message = f'bad magic number in {name!r}: {magic!r}'
-        _bootstrap._verbose_message('{}', message)
+        message = f"bad magic number in {name!r}: {magic!r}"
+        _bootstrap._verbose_message("{}", message)
         raise ImportError(message, **exc_details)
     if len(data) < 16:
-        message = f'reached EOF while reading pyc header of {name!r}'
-        _bootstrap._verbose_message('{}', message)
+        message = f"reached EOF while reading pyc header of {name!r}"
+        _bootstrap._verbose_message("{}", message)
         raise EOFError(message)
     flags = _unpack_uint32(data[4:8])
     # Only the first two flags are defined.
     if flags & ~0b11:
-        message = f'invalid flags {flags!r} in {name!r}'
+        message = f"invalid flags {flags!r} in {name!r}"
         raise ImportError(message, **exc_details)
     return flags
 
 
-def _validate_timestamp_pyc(data, source_mtime, source_size, name,
-                            exc_details):
+def _validate_timestamp_pyc(data, source_mtime, source_size, name, exc_details):
     """Validate a pyc against the source last-modified time.
 
     *data* is the contents of the pyc file. (Only the first 16 bytes are
@@ -692,12 +711,13 @@ def _validate_timestamp_pyc(data, source_mtime, source_size, name,
 
     """
     if _unpack_uint32(data[8:12]) != (source_mtime & 0xFFFFFFFF):
-        message = f'bytecode is stale for {name!r}'
-        _bootstrap._verbose_message('{}', message)
+        message = f"bytecode is stale for {name!r}"
+        _bootstrap._verbose_message("{}", message)
         raise ImportError(message, **exc_details)
-    if (source_size is not None and
-        _unpack_uint32(data[12:16]) != (source_size & 0xFFFFFFFF)):
-        raise ImportError(f'bytecode is stale for {name!r}', **exc_details)
+    if source_size is not None and _unpack_uint32(data[12:16]) != (
+        source_size & 0xFFFFFFFF
+    ):
+        raise ImportError(f"bytecode is stale for {name!r}", **exc_details)
 
 
 def _validate_hash_pyc(data, source_hash, name, exc_details):
@@ -719,7 +739,7 @@ def _validate_hash_pyc(data, source_hash, name, exc_details):
     """
     if data[8:16] != source_hash:
         raise ImportError(
-            f'hash in bytecode doesn\'t match hash of source {name!r}',
+            f"hash in bytecode doesn't match hash of source {name!r}",
             **exc_details,
         )
 
@@ -728,13 +748,16 @@ def _compile_bytecode(data, name=None, bytecode_path=None, source_path=None):
     """Compile bytecode as found in a pyc."""
     code = marshal.loads(data)
     if isinstance(code, _code_type):
-        _bootstrap._verbose_message('code object from {!r}', bytecode_path)
+        _bootstrap._verbose_message("code object from {!r}", bytecode_path)
         if source_path is not None:
             _imp._fix_co_filename(code, source_path)
         return code
     else:
-        raise ImportError('Non-code object in {!r}'.format(bytecode_path),
-                          name=name, path=bytecode_path)
+        raise ImportError(
+            "Non-code object in {!r}".format(bytecode_path),
+            name=name,
+            path=bytecode_path,
+        )
 
 
 def _code_to_timestamp_pyc(code, mtime=0, source_size=0):
@@ -764,6 +787,7 @@ def decode_source(source_bytes):
     Universal newline support is used in the decoding.
     """
     import tokenize  # To avoid bootstrap issues.
+
     source_bytes_readline = _io.BytesIO(source_bytes).readline
     encoding = tokenize.detect_encoding(source_bytes_readline)
     newline_decoder = _io.IncrementalNewlineDecoder(None, True)
@@ -775,8 +799,9 @@ def decode_source(source_bytes):
 _POPULATE = object()
 
 
-def spec_from_file_location(name, location=None, *, loader=None,
-                            submodule_search_locations=_POPULATE):
+def spec_from_file_location(
+    name, location=None, *, loader=None, submodule_search_locations=_POPULATE
+):
     """Return a module spec based on a file location.
 
     To indicate that the module is a package, set
@@ -791,8 +816,8 @@ def spec_from_file_location(name, location=None, *, loader=None,
         # The caller may simply want a partially populated location-
         # oriented spec.  So we set the location to a bogus value and
         # fill in as much as we can.
-        location = '<unknown>'
-        if hasattr(loader, 'get_filename'):
+        location = "<unknown>"
+        if hasattr(loader, "get_filename"):
             # ExecutionLoader
             try:
                 location = loader.get_filename(name)
@@ -828,7 +853,7 @@ def spec_from_file_location(name, location=None, *, loader=None,
     # Set submodule_search_paths appropriately.
     if submodule_search_locations is _POPULATE:
         # Check the loader.
-        if hasattr(loader, 'is_package'):
+        if hasattr(loader, "is_package"):
             try:
                 is_package = loader.is_package(name)
             except ImportError:
@@ -848,17 +873,15 @@ def spec_from_file_location(name, location=None, *, loader=None,
 
 # Loaders #####################################################################
 
-class WindowsRegistryFinder:
 
+class WindowsRegistryFinder:
     """Meta path finder for modules declared in the Windows registry."""
 
-    REGISTRY_KEY = (
-        'Software\\Python\\PythonCore\\{sys_version}'
-        '\\Modules\\{fullname}')
+    REGISTRY_KEY = "Software\\Python\\PythonCore\\{sys_version}" "\\Modules\\{fullname}"
     REGISTRY_KEY_DEBUG = (
-        'Software\\Python\\PythonCore\\{sys_version}'
-        '\\Modules\\{fullname}\\Debug')
-    DEBUG_BUILD = (_MS_WINDOWS and '_d.pyd' in EXTENSION_SUFFIXES)
+        "Software\\Python\\PythonCore\\{sys_version}" "\\Modules\\{fullname}\\Debug"
+    )
+    DEBUG_BUILD = _MS_WINDOWS and "_d.pyd" in EXTENSION_SUFFIXES
 
     @staticmethod
     def _open_registry(key):
@@ -873,11 +896,12 @@ class WindowsRegistryFinder:
             registry_key = cls.REGISTRY_KEY_DEBUG
         else:
             registry_key = cls.REGISTRY_KEY
-        key = registry_key.format(fullname=fullname,
-                                  sys_version='%d.%d' % sys.version_info[:2])
+        key = registry_key.format(
+            fullname=fullname, sys_version="%d.%d" % sys.version_info[:2]
+        )
         try:
             with cls._open_registry(key) as hkey:
-                filepath = winreg.QueryValue(hkey, '')
+                filepath = winreg.QueryValue(hkey, "")
         except OSError:
             return None
         return filepath
@@ -893,9 +917,9 @@ class WindowsRegistryFinder:
             return None
         for loader, suffixes in _get_supported_file_loaders():
             if filepath.endswith(tuple(suffixes)):
-                spec = _bootstrap.spec_from_loader(fullname,
-                                                   loader(fullname, filepath),
-                                                   origin=filepath)
+                spec = _bootstrap.spec_from_loader(
+                    fullname, loader(fullname, filepath), origin=filepath
+                )
                 return spec
 
     @classmethod
@@ -905,9 +929,11 @@ class WindowsRegistryFinder:
         This method is deprecated.  Use find_spec() instead.
 
         """
-        _warnings.warn("WindowsRegistryFinder.find_module() is deprecated and "
-                       "slated for removal in Python 3.12; use find_spec() instead",
-                       DeprecationWarning)
+        _warnings.warn(
+            "WindowsRegistryFinder.find_module() is deprecated and "
+            "slated for removal in Python 3.12; use find_spec() instead",
+            DeprecationWarning,
+        )
         spec = cls.find_spec(fullname, path)
         if spec is not None:
             return spec.loader
@@ -916,7 +942,6 @@ class WindowsRegistryFinder:
 
 
 class _LoaderBasics:
-
     """Base class of common code needed by both SourceLoader and
     SourcelessFileLoader."""
 
@@ -924,9 +949,9 @@ class _LoaderBasics:
         """Concrete implementation of InspectLoader.is_package by checking if
         the path returned by get_filename has a filename of '__init__.py'."""
         filename = _path_split(self.get_filename(fullname))[1]
-        filename_base = filename.rsplit('.', 1)[0]
-        tail_name = fullname.rpartition('.')[2]
-        return filename_base == '__init__' and tail_name != '__init__'
+        filename_base = filename.rsplit(".", 1)[0]
+        tail_name = fullname.rpartition(".")[2]
+        return filename_base == "__init__" and tail_name != "__init__"
 
     def create_module(self, spec):
         """Use default semantics for module creation."""
@@ -935,8 +960,10 @@ class _LoaderBasics:
         """Execute the module."""
         code = self.get_code(module.__name__)
         if code is None:
-            raise ImportError('cannot load module {!r} when get_code() '
-                              'returns None'.format(module.__name__))
+            raise ImportError(
+                "cannot load module {!r} when get_code() "
+                "returns None".format(module.__name__)
+            )
         _bootstrap._call_with_frames_removed(exec, code, module.__dict__)
 
     def load_module(self, fullname):
@@ -967,7 +994,7 @@ class SourceLoader(_LoaderBasics):
         Implementing this method allows the loader to read bytecode files.
         Raises OSError when the path cannot be handled.
         """
-        return {'mtime': self.path_mtime(path)}
+        return {"mtime": self.path_mtime(path)}
 
     def _cache_bytecode(self, source_path, cache_path, data):
         """Optional method which writes data (bytes) to a file path (a str).
@@ -985,15 +1012,15 @@ class SourceLoader(_LoaderBasics):
         Implementing this method allows for the writing of bytecode files.
         """
 
-
     def get_source(self, fullname):
         """Concrete implementation of InspectLoader.get_source."""
         path = self.get_filename(fullname)
         try:
             source_bytes = self.get_data(path)
         except OSError as exc:
-            raise ImportError('source not available through get_data()',
-                              name=fullname) from exc
+            raise ImportError(
+                "source not available through get_data()", name=fullname
+            ) from exc
         return decode_source(source_bytes)
 
     def source_to_code(self, data, path, *, _optimize=-1):
@@ -1001,8 +1028,9 @@ class SourceLoader(_LoaderBasics):
 
         The 'data' argument can be any object type that compile() supports.
         """
-        return _bootstrap._call_with_frames_removed(compile, data, path, 'exec',
-                                        dont_inherit=True, optimize=_optimize)
+        return _bootstrap._call_with_frames_removed(
+            compile, data, path, "exec", dont_inherit=True, optimize=_optimize
+        )
 
     def get_code(self, fullname):
         """Concrete implementation of InspectLoader.get_code.
@@ -1027,15 +1055,15 @@ class SourceLoader(_LoaderBasics):
             except OSError:
                 pass
             else:
-                source_mtime = int(st['mtime'])
+                source_mtime = int(st["mtime"])
                 try:
                     data = self.get_data(bytecode_path)
                 except OSError:
                     pass
                 else:
                     exc_details = {
-                        'name': fullname,
-                        'path': bytecode_path,
+                        "name": fullname,
+                        "path": bytecode_path,
                     }
                     try:
                         flags = _classify_pyc(data, fullname, exc_details)
@@ -1043,45 +1071,54 @@ class SourceLoader(_LoaderBasics):
                         hash_based = flags & 0b1 != 0
                         if hash_based:
                             check_source = flags & 0b10 != 0
-                            if (_imp.check_hash_based_pycs != 'never' and
-                                (check_source or
-                                 _imp.check_hash_based_pycs == 'always')):
+                            if _imp.check_hash_based_pycs != "never" and (
+                                check_source or _imp.check_hash_based_pycs == "always"
+                            ):
                                 source_bytes = self.get_data(source_path)
                                 source_hash = _imp.source_hash(
                                     _RAW_MAGIC_NUMBER,
                                     source_bytes,
                                 )
-                                _validate_hash_pyc(data, source_hash, fullname,
-                                                   exc_details)
+                                _validate_hash_pyc(
+                                    data, source_hash, fullname, exc_details
+                                )
                         else:
                             _validate_timestamp_pyc(
                                 data,
                                 source_mtime,
-                                st['size'],
+                                st["size"],
                                 fullname,
                                 exc_details,
                             )
                     except (ImportError, EOFError):
                         pass
                     else:
-                        _bootstrap._verbose_message('{} matches {}', bytecode_path,
-                                                    source_path)
-                        return _compile_bytecode(bytes_data, name=fullname,
-                                                 bytecode_path=bytecode_path,
-                                                 source_path=source_path)
+                        _bootstrap._verbose_message(
+                            "{} matches {}", bytecode_path, source_path
+                        )
+                        return _compile_bytecode(
+                            bytes_data,
+                            name=fullname,
+                            bytecode_path=bytecode_path,
+                            source_path=source_path,
+                        )
         if source_bytes is None:
             source_bytes = self.get_data(source_path)
         code_object = self.source_to_code(source_bytes, source_path)
-        _bootstrap._verbose_message('code object from {}', source_path)
-        if (not sys.dont_write_bytecode and bytecode_path is not None and
-                source_mtime is not None):
+        _bootstrap._verbose_message("code object from {}", source_path)
+        if (
+            not sys.dont_write_bytecode
+            and bytecode_path is not None
+            and source_mtime is not None
+        ):
             if hash_based:
                 if source_hash is None:
                     source_hash = _imp.source_hash(source_bytes)
                 data = _code_to_hash_pyc(code_object, source_hash, check_source)
             else:
-                data = _code_to_timestamp_pyc(code_object, source_mtime,
-                                              len(source_bytes))
+                data = _code_to_timestamp_pyc(
+                    code_object, source_mtime, len(source_bytes)
+                )
             try:
                 self._cache_bytecode(source_path, bytecode_path, data)
             except NotImplementedError:
@@ -1090,7 +1127,6 @@ class SourceLoader(_LoaderBasics):
 
 
 class FileLoader:
-
     """Base file loader class which implements the loader protocol methods that
     require file system usage."""
 
@@ -1101,8 +1137,7 @@ class FileLoader:
         self.path = path
 
     def __eq__(self, other):
-        return (self.__class__ == other.__class__ and
-                self.__dict__ == other.__dict__)
+        return self.__class__ == other.__class__ and self.__dict__ == other.__dict__
 
     def __hash__(self):
         return hash(self.name) ^ hash(self.path)
@@ -1130,23 +1165,23 @@ class FileLoader:
             with _io.open_code(str(path)) as file:
                 return file.read()
         else:
-            with _io.FileIO(path, 'r') as file:
+            with _io.FileIO(path, "r") as file:
                 return file.read()
 
     @_check_name
     def get_resource_reader(self, module):
         from importlib.readers import FileReader
+
         return FileReader(self)
 
 
 class SourceFileLoader(FileLoader, SourceLoader):
-
     """Concrete implementation of SourceLoader using the file system."""
 
     def path_stats(self, path):
         """Return the metadata for the path."""
         st = _path_stat(path)
-        return {'mtime': st.st_mtime, 'size': st.st_size}
+        return {"mtime": st.st_mtime, "size": st.st_size}
 
     def _cache_bytecode(self, source_path, bytecode_path, data):
         # Adapt between the two APIs
@@ -1172,20 +1207,17 @@ class SourceFileLoader(FileLoader, SourceLoader):
             except OSError as exc:
                 # Could be a permission error, read-only filesystem: just forget
                 # about writing the data.
-                _bootstrap._verbose_message('could not create {!r}: {!r}',
-                                            parent, exc)
+                _bootstrap._verbose_message("could not create {!r}: {!r}", parent, exc)
                 return
         try:
             _write_atomic(path, data, _mode)
-            _bootstrap._verbose_message('created {!r}', path)
+            _bootstrap._verbose_message("created {!r}", path)
         except OSError as exc:
             # Same as above: just don't write the bytecode.
-            _bootstrap._verbose_message('could not create {!r}: {!r}', path,
-                                        exc)
+            _bootstrap._verbose_message("could not create {!r}: {!r}", path, exc)
 
 
 class SourcelessFileLoader(FileLoader, _LoaderBasics):
-
     """Loader which handles sourceless file imports."""
 
     def get_code(self, fullname):
@@ -1194,8 +1226,8 @@ class SourcelessFileLoader(FileLoader, _LoaderBasics):
         # Call _classify_pyc to do basic validation of the pyc but ignore the
         # result. There's no source to check against.
         exc_details = {
-            'name': fullname,
-            'path': path,
+            "name": fullname,
+            "path": path,
         }
         _classify_pyc(data, fullname, exc_details)
         return _compile_bytecode(
@@ -1210,7 +1242,6 @@ class SourcelessFileLoader(FileLoader, _LoaderBasics):
 
 
 class ExtensionFileLoader(FileLoader, _LoaderBasics):
-
     """Loader for extension modules.
 
     The constructor is designed to work with FileFinder.
@@ -1222,31 +1253,30 @@ class ExtensionFileLoader(FileLoader, _LoaderBasics):
         self.path = path
 
     def __eq__(self, other):
-        return (self.__class__ == other.__class__ and
-                self.__dict__ == other.__dict__)
+        return self.__class__ == other.__class__ and self.__dict__ == other.__dict__
 
     def __hash__(self):
         return hash(self.name) ^ hash(self.path)
 
     def create_module(self, spec):
         """Create an uninitialized extension module"""
-        module = _bootstrap._call_with_frames_removed(
-            _imp.create_dynamic, spec)
-        _bootstrap._verbose_message('extension module {!r} loaded from {!r}',
-                         spec.name, self.path)
+        module = _bootstrap._call_with_frames_removed(_imp.create_dynamic, spec)
+        _bootstrap._verbose_message(
+            "extension module {!r} loaded from {!r}", spec.name, self.path
+        )
         return module
 
     def exec_module(self, module):
         """Initialize an extension module"""
         _bootstrap._call_with_frames_removed(_imp.exec_dynamic, module)
-        _bootstrap._verbose_message('extension module {!r} executed from {!r}',
-                         self.name, self.path)
+        _bootstrap._verbose_message(
+            "extension module {!r} executed from {!r}", self.name, self.path
+        )
 
     def is_package(self, fullname):
         """Return True if the extension module is a package."""
         file_name = _path_split(self.path)[1]
-        return any(file_name == '__init__' + suffix
-                   for suffix in EXTENSION_SUFFIXES)
+        return any(file_name == "__init__" + suffix for suffix in EXTENSION_SUFFIXES)
 
     def get_code(self, fullname):
         """Return None as an extension module cannot create a code object."""
@@ -1282,13 +1312,13 @@ class _NamespacePath:
 
     def _find_parent_path_names(self):
         """Returns a tuple of (parent-module-name, parent-path-attr-name)"""
-        parent, dot, me = self._name.rpartition('.')
-        if dot == '':
+        parent, dot, me = self._name.rpartition(".")
+        if dot == "":
             # This is a top-level module. sys.path contains the parent path.
-            return 'sys', 'path'
+            return "sys", "path"
         # Not a top-level module. parent-module.__path__ contains the
         #  parent path.
-        return parent, '__path__'
+        return parent, "__path__"
 
     def _get_parent_path(self):
         parent_module_name, path_attr_name = self._find_parent_path_names()
@@ -1296,7 +1326,7 @@ class _NamespacePath:
 
     def _recalculate(self):
         # If the parent's path has changed, recalculate _path
-        parent_path = tuple(self._get_parent_path()) # Make a copy
+        parent_path = tuple(self._get_parent_path())  # Make a copy
         if parent_path != self._last_parent_path or self._epoch != self._last_epoch:
             spec = self._path_finder(self._name, parent_path)
             # Note that no changes are made if a loader is returned, but we
@@ -1304,7 +1334,7 @@ class _NamespacePath:
             if spec is not None and spec.loader is None:
                 if spec.submodule_search_locations:
                     self._path = spec.submodule_search_locations
-            self._last_parent_path = parent_path     # Save the copy
+            self._last_parent_path = parent_path  # Save the copy
             self._last_epoch = self._epoch
         return self._path
 
@@ -1321,7 +1351,7 @@ class _NamespacePath:
         return len(self._recalculate())
 
     def __repr__(self):
-        return '_NamespacePath({!r})'.format(self._path)
+        return "_NamespacePath({!r})".format(self._path)
 
     def __contains__(self, item):
         return item in self._recalculate()
@@ -1344,18 +1374,21 @@ class NamespaceLoader:
         The method is deprecated.  The import machinery does the job itself.
 
         """
-        _warnings.warn("NamespaceLoader.module_repr() is deprecated and "
-                       "slated for removal in Python 3.12", DeprecationWarning)
-        return '<module {!r} (namespace)>'.format(module.__name__)
+        _warnings.warn(
+            "NamespaceLoader.module_repr() is deprecated and "
+            "slated for removal in Python 3.12",
+            DeprecationWarning,
+        )
+        return "<module {!r} (namespace)>".format(module.__name__)
 
     def is_package(self, fullname):
         return True
 
     def get_source(self, fullname):
-        return ''
+        return ""
 
     def get_code(self, fullname):
-        return compile('', '<string>', 'exec', dont_inherit=True)
+        return compile("", "<string>", "exec", dont_inherit=True)
 
     def create_module(self, spec):
         """Use default semantics for module creation."""
@@ -1370,13 +1403,15 @@ class NamespaceLoader:
 
         """
         # The import system never calls this method.
-        _bootstrap._verbose_message('namespace module loaded with path {!r}',
-                                    self._path)
+        _bootstrap._verbose_message(
+            "namespace module loaded with path {!r}", self._path
+        )
         # Warning implemented in _load_module_shim().
         return _bootstrap._load_module_shim(self, fullname)
 
     def get_resource_reader(self, module):
         from importlib.readers import NamespaceReader
+
         return NamespaceReader(self._path)
 
 
@@ -1386,8 +1421,8 @@ _NamespaceLoader = NamespaceLoader
 
 # Finders #####################################################################
 
-class PathFinder:
 
+class PathFinder:
     """Meta path finder for sys.path and package __path__ attributes."""
 
     @staticmethod
@@ -1399,20 +1434,21 @@ class PathFinder:
             # working directory may have changed.
             if finder is None or not _path_isabs(name):
                 del sys.path_importer_cache[name]
-            elif hasattr(finder, 'invalidate_caches'):
+            elif hasattr(finder, "invalidate_caches"):
                 finder.invalidate_caches()
         # Also invalidate the caches of _NamespacePaths
         # https://bugs.python.org/issue45703
         _NamespacePath._epoch += 1
 
         from importlib.metadata import MetadataPathFinder
+
         MetadataPathFinder.invalidate_caches()
 
     @staticmethod
     def _path_hooks(path):
         """Search sys.path_hooks for a finder for 'path'."""
         if sys.path_hooks is not None and not sys.path_hooks:
-            _warnings.warn('sys.path_hooks is empty', ImportWarning)
+            _warnings.warn("sys.path_hooks is empty", ImportWarning)
         for hook in sys.path_hooks:
             try:
                 return hook(path)
@@ -1429,7 +1465,7 @@ class PathFinder:
         and cache it. If no finder is available, store None.
 
         """
-        if path == '':
+        if path == "":
             try:
                 path = _os.getcwd()
             except FileNotFoundError:
@@ -1447,14 +1483,18 @@ class PathFinder:
     def _legacy_get_spec(cls, fullname, finder):
         # This would be a good place for a DeprecationWarning if
         # we ended up going that route.
-        if hasattr(finder, 'find_loader'):
-            msg = (f"{_bootstrap._object_name(finder)}.find_spec() not found; "
-                    "falling back to find_loader()")
+        if hasattr(finder, "find_loader"):
+            msg = (
+                f"{_bootstrap._object_name(finder)}.find_spec() not found; "
+                "falling back to find_loader()"
+            )
             _warnings.warn(msg, ImportWarning)
             loader, portions = finder.find_loader(fullname)
         else:
-            msg = (f"{_bootstrap._object_name(finder)}.find_spec() not found; "
-                    "falling back to find_module()")
+            msg = (
+                f"{_bootstrap._object_name(finder)}.find_spec() not found; "
+                "falling back to find_module()"
+            )
             _warnings.warn(msg, ImportWarning)
             loader = finder.find_module(fullname)
             portions = []
@@ -1475,7 +1515,7 @@ class PathFinder:
                 continue
             finder = cls._path_importer_cache(entry)
             if finder is not None:
-                if hasattr(finder, 'find_spec'):
+                if hasattr(finder, "find_spec"):
                     spec = finder.find_spec(fullname, target)
                 else:
                     spec = cls._legacy_get_spec(fullname, finder)
@@ -1485,7 +1525,7 @@ class PathFinder:
                     return spec
                 portions = spec.submodule_search_locations
                 if portions is None:
-                    raise ImportError('spec missing loader')
+                    raise ImportError("spec missing loader")
                 # This is possibly part of a namespace package.
                 #  Remember these path entries (if any) for when we
                 #  create a namespace package, and continue iterating
@@ -1513,7 +1553,9 @@ class PathFinder:
                 # We found at least one namespace path.  Return a spec which
                 # can create the namespace package.
                 spec.origin = None
-                spec.submodule_search_locations = _NamespacePath(fullname, namespace_path, cls._get_spec)
+                spec.submodule_search_locations = _NamespacePath(
+                    fullname, namespace_path, cls._get_spec
+                )
                 return spec
             else:
                 return None
@@ -1528,9 +1570,11 @@ class PathFinder:
         This method is deprecated.  Use find_spec() instead.
 
         """
-        _warnings.warn("PathFinder.find_module() is deprecated and "
-                       "slated for removal in Python 3.12; use find_spec() instead",
-                       DeprecationWarning)
+        _warnings.warn(
+            "PathFinder.find_module() is deprecated and "
+            "slated for removal in Python 3.12; use find_spec() instead",
+            DeprecationWarning,
+        )
         spec = cls.find_spec(fullname, path)
         if spec is None:
             return None
@@ -1547,11 +1591,11 @@ class PathFinder:
         of directories ``context.path``.
         """
         from importlib.metadata import MetadataPathFinder
+
         return MetadataPathFinder.find_distributions(*args, **kwargs)
 
 
 class FileFinder:
-
     """File-based finder.
 
     Interactions with the file system are cached for performance, being
@@ -1568,7 +1612,7 @@ class FileFinder:
             loaders.extend((suffix, loader) for suffix in suffixes)
         self._loaders = loaders
         # Base (directory) path
-        if not path or path == '.':
+        if not path or path == ".":
             self.path = _os.getcwd()
         elif not _path_isabs(path):
             self.path = _path_join(_os.getcwd(), path)
@@ -1591,9 +1635,11 @@ class FileFinder:
         This method is deprecated.  Use find_spec() instead.
 
         """
-        _warnings.warn("FileFinder.find_loader() is deprecated and "
-                       "slated for removal in Python 3.12; use find_spec() instead",
-                       DeprecationWarning)
+        _warnings.warn(
+            "FileFinder.find_loader() is deprecated and "
+            "slated for removal in Python 3.12; use find_spec() instead",
+            DeprecationWarning,
+        )
         spec = self.find_spec(fullname)
         if spec is None:
             return None, []
@@ -1601,8 +1647,9 @@ class FileFinder:
 
     def _get_spec(self, loader_class, fullname, path, smsl, target):
         loader = loader_class(fullname, path)
-        return spec_from_file_location(fullname, path, loader=loader,
-                                       submodule_search_locations=smsl)
+        return spec_from_file_location(
+            fullname, path, loader=loader, submodule_search_locations=smsl
+        )
 
     def find_spec(self, fullname, target=None):
         """Try to find a spec for the specified module.
@@ -1610,7 +1657,7 @@ class FileFinder:
         Returns the matching spec, or None if not found.
         """
         is_namespace = False
-        tail_module = fullname.rpartition('.')[2]
+        tail_module = fullname.rpartition(".")[2]
         try:
             mtime = _path_stat(self.path or _os.getcwd()).st_mtime
         except OSError:
@@ -1629,10 +1676,12 @@ class FileFinder:
         if cache_module in cache:
             base_path = _path_join(self.path, tail_module)
             for suffix, loader_class in self._loaders:
-                init_filename = '__init__' + suffix
+                init_filename = "__init__" + suffix
                 full_path = _path_join(base_path, init_filename)
                 if _path_isfile(full_path):
-                    return self._get_spec(loader_class, fullname, full_path, [base_path], target)
+                    return self._get_spec(
+                        loader_class, fullname, full_path, [base_path], target
+                    )
             else:
                 # If a namespace package, return the path if we don't
                 #  find a module in the next section.
@@ -1643,13 +1692,14 @@ class FileFinder:
                 full_path = _path_join(self.path, tail_module + suffix)
             except ValueError:
                 return None
-            _bootstrap._verbose_message('trying {}', full_path, verbosity=2)
+            _bootstrap._verbose_message("trying {}", full_path, verbosity=2)
             if cache_module + suffix in cache:
                 if _path_isfile(full_path):
-                    return self._get_spec(loader_class, fullname, full_path,
-                                          None, target)
+                    return self._get_spec(
+                        loader_class, fullname, full_path, None, target
+                    )
         if is_namespace:
-            _bootstrap._verbose_message('possible namespace for {}', base_path)
+            _bootstrap._verbose_message("possible namespace for {}", base_path)
             spec = _bootstrap.ModuleSpec(fullname, None)
             spec.submodule_search_locations = [base_path]
             return spec
@@ -1666,7 +1716,7 @@ class FileFinder:
             contents = []
         # We store two cached versions, to handle runtime changes of the
         # PYTHONCASEOK environment variable.
-        if not sys.platform.startswith('win'):
+        if not sys.platform.startswith("win"):
             self._path_cache = set(contents)
         else:
             # Windows users can import modules with case-insensitive file
@@ -1676,9 +1726,9 @@ class FileFinder:
             # case-sensitive manner.
             lower_suffix_contents = set()
             for item in contents:
-                name, dot, suffix = item.partition('.')
+                name, dot, suffix = item.partition(".")
                 if dot:
-                    new_name = '{}.{}'.format(name, suffix.lower())
+                    new_name = "{}.{}".format(name, suffix.lower())
                 else:
                     new_name = name
                 lower_suffix_contents.add(new_name)
@@ -1696,24 +1746,26 @@ class FileFinder:
         raised.
 
         """
+
         def path_hook_for_FileFinder(path):
             """Path hook for importlib.machinery.FileFinder."""
             if not _path_isdir(path):
-                raise ImportError('only directories are supported', path=path)
+                raise ImportError("only directories are supported", path=path)
             return cls(path, *loader_details)
 
         return path_hook_for_FileFinder
 
     def __repr__(self):
-        return 'FileFinder({!r})'.format(self.path)
+        return "FileFinder({!r})".format(self.path)
 
 
 # Import setup ###############################################################
 
+
 def _fix_up_module(ns, name, pathname, cpathname=None):
     # This function is used by PyImport_ExecCodeModuleObject().
-    loader = ns.get('__loader__')
-    spec = ns.get('__spec__')
+    loader = ns.get("__loader__")
+    spec = ns.get("__spec__")
     if not loader:
         if spec:
             loader = spec.loader
@@ -1724,10 +1776,10 @@ def _fix_up_module(ns, name, pathname, cpathname=None):
     if not spec:
         spec = spec_from_file_location(name, pathname, loader=loader)
     try:
-        ns['__spec__'] = spec
-        ns['__loader__'] = loader
-        ns['__file__'] = pathname
-        ns['__cached__'] = cpathname
+        ns["__spec__"] = spec
+        ns["__loader__"] = loader
+        ns["__file__"] = pathname
+        ns["__cached__"] = cpathname
     except Exception:
         # Not important enough to report.
         pass

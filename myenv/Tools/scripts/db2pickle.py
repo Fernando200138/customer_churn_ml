@@ -20,6 +20,7 @@ output is written to standard output.
 """
 
 import getopt
+
 try:
     import bsddb
 except ImportError:
@@ -37,6 +38,7 @@ try:
 except ImportError:
     anydbm = None
 import sys
+
 try:
     import pickle as pickle
 except ImportError:
@@ -44,14 +46,16 @@ except ImportError:
 
 prog = sys.argv[0]
 
+
 def usage():
     sys.stderr.write(__doc__ % globals())
 
+
 def main(args):
     try:
-        opts, args = getopt.getopt(args, "hbrdag",
-                                   ["hash", "btree", "recno", "dbm",
-                                    "gdbm", "anydbm"])
+        opts, args = getopt.getopt(
+            args, "hbrdag", ["hash", "btree", "recno", "dbm", "gdbm", "anydbm"]
+        )
     except getopt.error:
         usage()
         return 1
@@ -65,7 +69,7 @@ def main(args):
     else:
         dbfile = args[0]
         try:
-            pfile = open(args[1], 'wb')
+            pfile = open(args[1], "wb")
         except IOError:
             sys.stderr.write("Unable to open %s\n" % args[1])
             return 1
@@ -117,19 +121,20 @@ def main(args):
             dbopen = bsddb.hashopen
 
     try:
-        db = dbopen(dbfile, 'r')
+        db = dbopen(dbfile, "r")
     except bsddb.error:
         sys.stderr.write("Unable to open %s.  " % dbfile)
         sys.stderr.write("Check for format or version mismatch.\n")
         return 1
 
     for k in db.keys():
-        pickle.dump((k, db[k]), pfile, 1==1)
+        pickle.dump((k, db[k]), pfile, 1 == 1)
 
     db.close()
     pfile.close()
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

@@ -20,6 +20,7 @@ import sys
 import getopt
 import tokenize
 
+
 def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "lh")
@@ -42,10 +43,12 @@ def main():
         exit = exit or x
     return exit
 
+
 def usage(msg):
     sys.stderr.write("%s: %s\n" % (sys.argv[0], msg))
     sys.stderr.write("Usage: %s [-l] file ...\n" % sys.argv[0])
     sys.stderr.write("Try `%s -h' for more information.\n" % sys.argv[0])
+
 
 def process(filename, listnames):
     if os.path.isdir(filename):
@@ -65,7 +68,8 @@ def process(filename, listnames):
                     break
                 if row != lastrow:
                     lastrow = row
-                    print("%s:%d:%s" % (filename, row, line), end=' ')
+                    print("%s:%d:%s" % (filename, row, line), end=" ")
+
 
 def processdir(dir, listnames):
     try:
@@ -84,6 +88,7 @@ def processdir(dir, listnames):
         x = process(fn, listnames)
         exit = exit or x
     return exit
+
 
 if __name__ == "__main__":
     sys.exit(main())

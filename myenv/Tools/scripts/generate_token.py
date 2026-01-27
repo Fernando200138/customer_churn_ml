@@ -9,6 +9,7 @@
 
 NT_OFFSET = 256
 
+
 def load_tokens(path):
     tok_names = []
     string_to_tok = {}
@@ -17,7 +18,7 @@ def load_tokens(path):
         for line in fp:
             line = line.strip()
             # strip comments
-            i = line.find('#')
+            i = line.find("#")
             if i >= 0:
                 line = line[:i].strip()
             if not line:
@@ -25,7 +26,7 @@ def load_tokens(path):
             fields = line.split()
             name = fields[0]
             value = len(tok_names)
-            if name == 'ERRORTOKEN':
+            if name == "ERRORTOKEN":
                 ERRORTOKEN = value
             string = fields[1] if len(fields) > 1 else None
             if string:
@@ -37,12 +38,12 @@ def load_tokens(path):
 
 def update_file(file, content):
     try:
-        with open(file, 'r') as fobj:
+        with open(file, "r") as fobj:
             if fobj.read() == content:
                 return False
     except (OSError, ValueError):
         pass
-    with open(file, 'w') as fobj:
+    with open(file, "w") as fobj:
         fobj.write(content)
     return True
 
@@ -87,18 +88,17 @@ PyAPI_FUNC(int) PyToken_ThreeChars(int, int, int);
 #endif /* Py_LIMITED_API */
 """
 
-def make_h(infile, outfile='Include/token.h'):
+
+def make_h(infile, outfile="Include/token.h"):
     tok_names, ERRORTOKEN, string_to_tok = load_tokens(infile)
 
     defines = []
-    for value, name in enumerate(tok_names[:ERRORTOKEN + 1]):
+    for value, name in enumerate(tok_names[: ERRORTOKEN + 1]):
         defines.append("#define %-15s %d\n" % (name, value))
 
-    if update_file(outfile, token_h_template % (
-            ''.join(defines),
-            len(tok_names),
-            NT_OFFSET
-        )):
+    if update_file(
+        outfile, token_h_template % ("".join(defines), len(tok_names), NT_OFFSET)
+    ):
         print("%s regenerated from %s" % (outfile, infile))
 
 
@@ -138,12 +138,13 @@ PyToken_ThreeChars(int c1, int c2, int c3)
 }
 """
 
+
 def generate_chars_to_token(mapping, n=1):
     result = []
     write = result.append
-    indent = '    ' * n
+    indent = "    " * n
     write(indent)
-    write('switch (c%d) {\n' % (n,))
+    write("switch (c%d) {\n" % (n,))
     for c in sorted(mapping):
         write(indent)
         value = mapping[c]
@@ -151,16 +152,17 @@ def generate_chars_to_token(mapping, n=1):
             write("case '%s':\n" % (c,))
             write(generate_chars_to_token(value, n + 1))
             write(indent)
-            write('    break;\n')
+            write("    break;\n")
         else:
             write("case '%s': return %s;\n" % (c, value))
     write(indent)
-    write('}\n')
-    return ''.join(result)
+    write("}\n")
+    return "".join(result)
 
-def make_c(infile, outfile='Parser/token.c'):
+
+def make_c(infile, outfile="Parser/token.c"):
     tok_names, ERRORTOKEN, string_to_tok = load_tokens(infile)
-    string_to_tok['<>'] = string_to_tok['!=']
+    string_to_tok["<>"] = string_to_tok["!="]
     chars_to_token = {}
     for string, value in string_to_tok.items():
         assert 1 <= len(string) <= 3
@@ -173,16 +175,20 @@ def make_c(infile, outfile='Parser/token.c'):
     names = []
     for value, name in enumerate(tok_names):
         if value >= ERRORTOKEN:
-            name = '<%s>' % name
+            name = "<%s>" % name
         names.append('    "%s",\n' % name)
     names.append('    "<N_TOKENS>",\n')
 
-    if update_file(outfile, token_c_template % (
-            ''.join(names),
+    if update_file(
+        outfile,
+        token_c_template
+        % (
+            "".join(names),
             generate_chars_to_token(chars_to_token[1]),
             generate_chars_to_token(chars_to_token[2]),
-            generate_chars_to_token(chars_to_token[3])
-        )):
+            generate_chars_to_token(chars_to_token[3]),
+        ),
+    ):
         print("%s regenerated from %s" % (outfile, infile))
 
 
@@ -194,19 +200,20 @@ token_inc_template = """\
 .. data:: NT_OFFSET
 """
 
-def make_rst(infile, outfile='Doc/library/token-list.inc'):
+
+def make_rst(infile, outfile="Doc/library/token-list.inc"):
     tok_names, ERRORTOKEN, string_to_tok = load_tokens(infile)
     tok_to_string = {value: s for s, value in string_to_tok.items()}
 
     names = []
-    for value, name in enumerate(tok_names[:ERRORTOKEN + 1]):
-        names.append('.. data:: %s' % (name,))
+    for value, name in enumerate(tok_names[: ERRORTOKEN + 1]):
+        names.append(".. data:: %s" % (name,))
         if value in tok_to_string:
-            names.append('')
+            names.append("")
             names.append('   Token value for ``"%s"``.' % tok_to_string[value])
-        names.append('')
+        names.append("")
 
-    if update_file(outfile, token_inc_template % '\n'.join(names)):
+    if update_file(outfile, token_inc_template % "\n".join(names)):
         print("%s regenerated from %s" % (outfile, infile))
 
 
@@ -240,33 +247,41 @@ def ISEOF(x):
     return x == ENDMARKER
 '''
 
-def make_py(infile, outfile='Lib/token.py'):
+
+def make_py(infile, outfile="Lib/token.py"):
     tok_names, ERRORTOKEN, string_to_tok = load_tokens(infile)
 
     constants = []
     for value, name in enumerate(tok_names):
-        constants.append('%s = %d' % (name, value))
-    constants.insert(ERRORTOKEN,
-        "# These aren't used by the C tokenizer but are needed for tokenize.py")
+        constants.append("%s = %d" % (name, value))
+    constants.insert(
+        ERRORTOKEN,
+        "# These aren't used by the C tokenizer but are needed for tokenize.py",
+    )
 
     token_types = []
     for s, value in sorted(string_to_tok.items()):
-        token_types.append('    %r: %s,' % (s, tok_names[value]))
+        token_types.append("    %r: %s," % (s, tok_names[value]))
 
-    if update_file(outfile, token_py_template % (
-            '\n'.join(constants),
+    if update_file(
+        outfile,
+        token_py_template
+        % (
+            "\n".join(constants),
             len(tok_names),
             NT_OFFSET,
-            '\n'.join(token_types),
-        )):
+            "\n".join(token_types),
+        ),
+    ):
         print("%s regenerated from %s" % (outfile, infile))
 
 
-def main(op, infile='Grammar/Tokens', *args):
-    make = globals()['make_' + op]
+def main(op, infile="Grammar/Tokens", *args):
+    make = globals()["make_" + op]
     make(infile, *args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
+
     main(*sys.argv[1:])

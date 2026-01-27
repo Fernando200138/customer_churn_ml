@@ -47,7 +47,7 @@ class SimpleReader(abc.ABC):
 
     @property
     def name(self):
-        return self.package.split('.')[-1]
+        return self.package.split(".")[-1]
 
 
 class ResourceHandle(Traversable):
@@ -66,9 +66,9 @@ class ResourceHandle(Traversable):
     def is_dir(self):
         return False
 
-    def open(self, mode='r', *args, **kwargs):
+    def open(self, mode="r", *args, **kwargs):
         stream = self.parent.reader.open_binary(self.name)
-        if 'b' not in mode:
+        if "b" not in mode:
             stream = io.TextIOWrapper(stream, *args, **kwargs)
         return stream
 
@@ -102,7 +102,7 @@ class ResourceContainer(Traversable):
     @staticmethod
     def _flatten(compound_names):
         for name in compound_names:
-            yield from name.split('/')
+            yield from name.split("/")
 
     def joinpath(self, *descendants):
         if not descendants:

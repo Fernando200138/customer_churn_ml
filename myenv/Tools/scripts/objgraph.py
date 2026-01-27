@@ -26,13 +26,14 @@ import re
 
 # Types of symbols.
 #
-definitions = 'TRGDSBAEC'
-externals = 'UV'
-ignore = 'Nntrgdsbavuc'
+definitions = "TRGDSBAEC"
+externals = "UV"
+ignore = "Nntrgdsbavuc"
 
 # Regular expression to parse "nm -o" output.
 #
-matcher = re.compile('(.*):\t?........ (.) (.*)$')
+matcher = re.compile("(.*):\t?........ (.) (.*)$")
+
 
 # Store "item" in "dict" under "key".
 # The dictionary maps keys to lists of items.
@@ -44,14 +45,16 @@ def store(dict, key, item):
     else:
         dict[key] = [item]
 
+
 # Return a flattened version of a list of strings: the concatenation
 # of its elements with intervening spaces.
 #
 def flat(list):
-    s = ''
+    s = ""
     for item in list:
-        s = s + ' ' + item
+        s = s + " " + item
     return s[1:]
+
 
 # Global variables mapping defined/undefined names to files and back.
 #
@@ -59,6 +62,7 @@ file2undef = {}
 def2file = {}
 file2def = {}
 undef2file = {}
+
 
 # Read one input file and merge the data into the tables.
 # Argument is an open file.
@@ -70,7 +74,9 @@ def readinput(fp):
             break
         # If you get any output from this line,
         # it is probably caused by an unexpected input line:
-        if matcher.search(s) < 0: s; continue # Shouldn't happen
+        if matcher.search(s) < 0:
+            s
+            continue  # Shouldn't happen
         (ra, rb), (r1a, r1b), (r2a, r2b), (r3a, r3b) = matcher.regs[:4]
         fn, name, type = s[r1a:r1b], s[r3a:r3b], s[r2a:r2b]
         if type in definitions:
@@ -80,7 +86,8 @@ def readinput(fp):
             store(file2undef, fn, name)
             store(undef2file, name, fn)
         elif not type in ignore:
-            print(fn + ':' + name + ': unknown type ' + type)
+            print(fn + ":" + name + ": unknown type " + type)
+
 
 # Print all names that were undefined in some module and where they are
 # defined.
@@ -88,18 +95,19 @@ def readinput(fp):
 def printcallee():
     flist = sorted(file2undef.keys())
     for filename in flist:
-        print(filename + ':')
+        print(filename + ":")
         elist = file2undef[filename]
         elist.sort()
         for ext in elist:
             if len(ext) >= 8:
-                tabs = '\t'
+                tabs = "\t"
             else:
-                tabs = '\t\t'
+                tabs = "\t\t"
             if ext not in def2file:
-                print('\t' + ext + tabs + ' *undefined')
+                print("\t" + ext + tabs + " *undefined")
             else:
-                print('\t' + ext + tabs + flat(def2file[ext]))
+                print("\t" + ext + tabs + flat(def2file[ext]))
+
 
 # Print for each module the names of the other modules that use it.
 #
@@ -112,14 +120,15 @@ def printcaller():
                 callers = callers + undef2file[label]
         if callers:
             callers.sort()
-            print(filename + ':')
-            lastfn = ''
+            print(filename + ":")
+            lastfn = ""
             for fn in callers:
                 if fn != lastfn:
-                    print('\t' + fn)
+                    print("\t" + fn)
                 lastfn = fn
         else:
-            print(filename + ': unused')
+            print(filename + ": unused")
+
 
 # Print undefined names and where they are used.
 #
@@ -131,10 +140,11 @@ def printundef():
                 store(undefs, ext, filename)
     elist = sorted(undefs.keys())
     for ext in elist:
-        print(ext + ':')
+        print(ext + ":")
         flist = sorted(undefs[ext])
         for filename in flist:
-            print('\t' + filename)
+            print("\t" + filename)
+
 
 # Print warning messages about names defined in more than one file.
 #
@@ -144,40 +154,41 @@ def warndups():
     names = sorted(def2file.keys())
     for name in names:
         if len(def2file[name]) > 1:
-            print('warning:', name, 'multiply defined:', end=' ')
+            print("warning:", name, "multiply defined:", end=" ")
             print(flat(def2file[name]))
     sys.stdout = savestdout
+
 
 # Main program
 #
 def main():
     try:
-        optlist, args = getopt.getopt(sys.argv[1:], 'cdu')
+        optlist, args = getopt.getopt(sys.argv[1:], "cdu")
     except getopt.error:
         sys.stdout = sys.stderr
-        print('Usage:', os.path.basename(sys.argv[0]), end=' ')
-        print('[-cdu] [file] ...')
-        print('-c: print callers per objectfile')
-        print('-d: print callees per objectfile')
-        print('-u: print usage of undefined symbols')
-        print('If none of -cdu is specified, all are assumed.')
+        print("Usage:", os.path.basename(sys.argv[0]), end=" ")
+        print("[-cdu] [file] ...")
+        print("-c: print callers per objectfile")
+        print("-d: print callees per objectfile")
+        print("-u: print usage of undefined symbols")
+        print("If none of -cdu is specified, all are assumed.")
         print('Use "nm -o" to generate the input')
-        print('e.g.: nm -o /lib/libc.a | objgraph')
+        print("e.g.: nm -o /lib/libc.a | objgraph")
         return 1
     optu = optc = optd = 0
     for opt, void in optlist:
-        if opt == '-u':
+        if opt == "-u":
             optu = 1
-        elif opt == '-c':
+        elif opt == "-c":
             optc = 1
-        elif opt == '-d':
+        elif opt == "-d":
             optd = 1
     if optu == optc == optd == 0:
         optu = optc = optd = 1
     if not args:
-        args = ['-']
+        args = ["-"]
     for filename in args:
-        if filename == '-':
+        if filename == "-":
             readinput(sys.stdin)
         else:
             with open(filename) as f:
@@ -185,26 +196,27 @@ def main():
     #
     warndups()
     #
-    more = (optu + optc + optd > 1)
+    more = optu + optc + optd > 1
     if optd:
         if more:
-            print('---------------All callees------------------')
+            print("---------------All callees------------------")
         printcallee()
     if optu:
         if more:
-            print('---------------Undefined callees------------')
+            print("---------------Undefined callees------------")
         printundef()
     if optc:
         if more:
-            print('---------------All Callers------------------')
+            print("---------------All Callers------------------")
         printcaller()
     return 0
+
 
 # Call the main program.
 # Use its return value as exit status.
 # Catch interrupts to avoid stack trace.
 #
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         sys.exit(main())
     except KeyboardInterrupt:

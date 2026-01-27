@@ -43,19 +43,22 @@ import tokenize
 import os
 import sys
 
-dryrun  = 0
+dryrun = 0
 recurse = 0
 verbose = 0
 
+
 def errprint(*args):
     strings = map(str, args)
-    msg = ' '.join(strings)
-    if msg[-1:] != '\n':
-        msg += '\n'
+    msg = " ".join(strings)
+    if msg[-1:] != "\n":
+        msg += "\n"
     sys.stderr.write(msg)
+
 
 def main():
     import getopt
+
     global verbose, recurse, dryrun
     try:
         opts, args = getopt.getopt(sys.argv[1:], "drv")
@@ -63,17 +66,18 @@ def main():
         errprint(msg)
         return
     for o, a in opts:
-        if o == '-d':
+        if o == "-d":
             dryrun += 1
-        elif o == '-r':
+        elif o == "-r":
             recurse += 1
-        elif o == '-v':
+        elif o == "-v":
             verbose += 1
     if not args:
         errprint("Usage:", __doc__)
         return
     for arg in args:
         check(arg)
+
 
 def check(file):
     if os.path.isdir(file) and not os.path.islink(file):
@@ -82,14 +86,14 @@ def check(file):
         names = os.listdir(file)
         for name in names:
             fullname = os.path.join(file, name)
-            if ((recurse and os.path.isdir(fullname) and
-                 not os.path.islink(fullname))
-                or name.lower().endswith(".py")):
+            if (
+                recurse and os.path.isdir(fullname) and not os.path.islink(fullname)
+            ) or name.lower().endswith(".py"):
                 check(fullname)
         return
 
     if verbose:
-        print("checking", file, "...", end=' ')
+        print("checking", file, "...", end=" ")
     try:
         f = open(file)
     except IOError as msg:
@@ -107,14 +111,14 @@ def check(file):
             if dryrun:
                 print("But this is a dry run, so leaving it alone.")
         for s, e, line in changed:
-            print("%r lines %d-%d" % (file, s+1, e+1))
-            for i in range(s, e+1):
-                print(ff.lines[i], end=' ')
+            print("%r lines %d-%d" % (file, s + 1, e + 1))
+            for i in range(s, e + 1):
+                print(ff.lines[i], end=" ")
             if line is None:
                 print("-- deleted")
             else:
                 print("-- change to:")
-                print(line, end=' ')
+                print(line, end=" ")
         if not dryrun:
             bak = file + ".bak"
             if os.path.exists(bak):
@@ -130,13 +134,14 @@ def check(file):
         if verbose:
             print("unchanged.")
 
+
 class FutureFinder:
 
     def __init__(self, f, fname):
         self.f = f
         self.fname = fname
         self.ateof = 0
-        self.lines = [] # raw file lines
+        self.lines = []  # raw file lines
 
         # List of (start_index, end_index, new_line) triples.
         self.changed = []
@@ -180,7 +185,7 @@ class FutureFinder:
 
             if not (type is NAME and token == "from"):
                 break
-            startline = srow - 1    # tokenize is one-based
+            startline = srow - 1  # tokenize is one-based
             type, token, (srow, scol), (erow, ecol), line = get()
 
             if not (type is NAME and token == "__future__"):
@@ -197,7 +202,7 @@ class FutureFinder:
                 features.append(token)
                 type, token, (srow, scol), (erow, ecol), line = get()
 
-                if not (type is OP and token == ','):
+                if not (type is OP and token == ","):
                     break
                 type, token, (srow, scol), (erow, ecol), line = get()
 
@@ -208,8 +213,10 @@ class FutureFinder:
                 type, token, (srow, scol), (erow, ecol), line = get()
 
             if type is not NEWLINE:
-                errprint("Skipping file %r; can't parse line %d:\n%s" %
-                         (self.fname, srow, line))
+                errprint(
+                    "Skipping file %r; can't parse line %d:\n%s"
+                    % (self.fname, srow, line)
+                )
                 return []
 
             endline = srow - 1
@@ -237,10 +244,10 @@ class FutureFinder:
                     line = None
                 else:
                     line = "from __future__ import "
-                    line += ', '.join(okfeatures)
+                    line += ", ".join(okfeatures)
                     if comment is not None:
-                        line += ' ' + comment
-                    line += '\n'
+                        line += " " + comment
+                    line += "\n"
                 changed.append((startline, endline, line))
 
             # Loop back for more future statements.
@@ -249,7 +256,7 @@ class FutureFinder:
 
     def gettherest(self):
         if self.ateof:
-            self.therest = ''
+            self.therest = ""
         else:
             self.therest = self.f.read()
 
@@ -263,13 +270,14 @@ class FutureFinder:
         for s, e, line in changed:
             if line is None:
                 # pure deletion
-                del self.lines[s:e+1]
+                del self.lines[s : e + 1]
             else:
-                self.lines[s:e+1] = [line]
+                self.lines[s : e + 1] = [line]
         f.writelines(self.lines)
         # Copy over the remainder of the file.
         if self.therest:
             f.write(self.therest)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

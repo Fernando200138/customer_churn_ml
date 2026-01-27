@@ -20,9 +20,11 @@ import re
 
 DEBUG = False
 
+
 def dprint(*args, **kw):
     if DEBUG:
         print(*args, **kw)
+
 
 def parse_headerfiles(startpath):
     """
@@ -31,9 +33,12 @@ def parse_headerfiles(startpath):
     search = "Python.h"
     name = os.path.join(startpath, search)
     if not os.path.exists(name):
-        raise ValueError("file {} was not found in {}\n"
-            "Please give the path to Python's include directory."
-            .format(search, startpath))
+        raise ValueError(
+            "file {} was not found in {}\n"
+            "Please give the path to Python's include directory.".format(
+                search, startpath
+            )
+        )
     errors = 0
     with open(name) as python_h:
         while True:
@@ -51,6 +56,7 @@ def parse_headerfiles(startpath):
             errors += parse_file(name)
     return errors
 
+
 def ifdef_level_gen():
     """
     Scan lines for #ifdef and track the level.
@@ -65,18 +71,21 @@ def ifdef_level_gen():
         elif re.match(endif_pattern, line):
             level -= 1
 
+
 def limited_gen():
     """
     Scan lines for Py_LIMITED_API yes(1) no(-1) or nothing (0)
     """
-    limited = [0]   # nothing
+    limited = [0]  # nothing
     unlimited_pattern = r"^\s*#\s*ifndef\s+Py_LIMITED_API"
-    limited_pattern = "|".join([
-        r"^\s*#\s*ifdef\s+Py_LIMITED_API",
-        r"^\s*#\s*(el)?if\s+!\s*defined\s*\(\s*Py_LIMITED_API\s*\)\s*\|\|",
-        r"^\s*#\s*(el)?if\s+defined\s*\(\s*Py_LIMITED_API"
-        ])
-    else_pattern =      r"^\s*#\s*else"
+    limited_pattern = "|".join(
+        [
+            r"^\s*#\s*ifdef\s+Py_LIMITED_API",
+            r"^\s*#\s*(el)?if\s+!\s*defined\s*\(\s*Py_LIMITED_API\s*\)\s*\|\|",
+            r"^\s*#\s*(el)?if\s+defined\s*\(\s*Py_LIMITED_API",
+        ]
+    )
+    else_pattern = r"^\s*#\s*else"
     ifdef_level = ifdef_level_gen()
     status = next(ifdef_level)
     wait_for = -1
@@ -104,6 +113,7 @@ def limited_gen():
                 wait_for = status - 1
             elif re.match(else_pattern, line):
                 limited.append(-limited.pop())  # negate top
+
 
 def parse_file(fname):
     errors = 0
@@ -134,15 +144,16 @@ def parse_file(fname):
                         errors += 1
     return errors
 
+
 def report(fname, nr, macro):
     f = sys.stderr
     print(fname + ":" + str(nr), file=f)
     print(macro, file=f)
+
 
 if __name__ == "__main__":
     p = sys.argv[1] if sys.argv[1:] else "../../Include"
     errors = parse_headerfiles(p)
     if errors:
         # somehow it makes sense to raise a TypeError :-)
-        raise TypeError("These {} locations contradict the limited API."
-                        .format(errors))
+        raise TypeError("These {} locations contradict the limited API.".format(errors))

@@ -21,11 +21,15 @@ def load_tests(*args):
     # bpo-40055: Save/restore warnings filters to leave them unchanged.
     # Importing tests imports docutils which imports pkg_resources
     # which adds a warnings filter.
-    with (save_restore_warnings_filters(),
-          warnings_helper.check_warnings(
+    with (
+        save_restore_warnings_filters(),
+        warnings_helper.check_warnings(
             ("The distutils.sysconfig module is deprecated", DeprecationWarning),
-            quiet=True)):
+            quiet=True,
+        ),
+    ):
         return load_package_tests(os.path.dirname(__file__), *args)
+
 
 if __name__ == "__main__":
     unittest.main()

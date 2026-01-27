@@ -1,11 +1,11 @@
 """Subset of importlib.abc used to reduce importlib.util imports."""
+
 from . import _bootstrap
 import abc
 import warnings
 
 
 class Loader(metaclass=abc.ABCMeta):
-
     """Abstract base class for import loaders."""
 
     def create_module(self, spec):
@@ -34,7 +34,7 @@ class Loader(metaclass=abc.ABCMeta):
         functionality for this method.
 
         """
-        if not hasattr(self, 'exec_module'):
+        if not hasattr(self, "exec_module"):
             raise ImportError
         # Warning implemented in _load_module_shim().
         return _bootstrap._load_module_shim(self, fullname)
@@ -48,7 +48,10 @@ class Loader(metaclass=abc.ABCMeta):
         This method is deprecated.
 
         """
-        warnings.warn("importlib.abc.Loader.module_repr() is deprecated and "
-                      "slated for removal in Python 3.12", DeprecationWarning)
+        warnings.warn(
+            "importlib.abc.Loader.module_repr() is deprecated and "
+            "slated for removal in Python 3.12",
+            DeprecationWarning,
+        )
         # The exception will cause ModuleType.__repr__ to ignore this method.
         raise NotImplementedError

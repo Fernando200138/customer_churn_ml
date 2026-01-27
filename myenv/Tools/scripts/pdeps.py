@@ -30,25 +30,25 @@ import os
 def main():
     args = sys.argv[1:]
     if not args:
-        print('usage: pdeps file.py file.py ...')
+        print("usage: pdeps file.py file.py ...")
         return 2
     #
     table = {}
     for arg in args:
         process(arg, table)
     #
-    print('--- Uses ---')
+    print("--- Uses ---")
     printresults(table)
     #
-    print('--- Used By ---')
+    print("--- Used By ---")
     inv = inverse(table)
     printresults(inv)
     #
-    print('--- Closure of Uses ---')
+    print("--- Closure of Uses ---")
     reach = closure(table)
     printresults(reach)
     #
-    print('--- Closure of Used By ---')
+    print("--- Closure of Used By ---")
     invreach = inverse(reach)
     printresults(invreach)
     #
@@ -57,30 +57,33 @@ def main():
 
 # Compiled regular expressions to search for import statements
 #
-m_import = re.compile('^[ \t]*from[ \t]+([^ \t]+)[ \t]+')
-m_from = re.compile('^[ \t]*import[ \t]+([^#]+)')
+m_import = re.compile("^[ \t]*from[ \t]+([^ \t]+)[ \t]+")
+m_from = re.compile("^[ \t]*import[ \t]+([^#]+)")
 
 
 # Collect data from one file
 #
 def process(filename, table):
-    with open(filename, encoding='utf-8') as fp:
+    with open(filename, encoding="utf-8") as fp:
         mod = os.path.basename(filename)
-        if mod[-3:] == '.py':
+        if mod[-3:] == ".py":
             mod = mod[:-3]
         table[mod] = list = []
         while 1:
             line = fp.readline()
-            if not line: break
-            while line[-1:] == '\\':
+            if not line:
+                break
+            while line[-1:] == "\\":
                 nextline = fp.readline()
-                if not nextline: break
+                if not nextline:
+                    break
                 line = line[:-1] + nextline
             m_found = m_import.match(line) or m_from.match(line)
             if m_found:
                 (a, b), (a1, b1) = m_found.regs[:2]
-            else: continue
-            words = line[a1:b1].split(',')
+            else:
+                continue
+            words = line[a1:b1].split(",")
             # print '#', line, words
             for word in words:
                 word = word.strip()
@@ -145,19 +148,20 @@ def store(dict, key, item):
 def printresults(table):
     modules = sorted(table.keys())
     maxlen = 0
-    for mod in modules: maxlen = max(maxlen, len(mod))
+    for mod in modules:
+        maxlen = max(maxlen, len(mod))
     for mod in modules:
         list = sorted(table[mod])
-        print(mod.ljust(maxlen), ':', end=' ')
+        print(mod.ljust(maxlen), ":", end=" ")
         if mod in list:
-            print('(*)', end=' ')
+            print("(*)", end=" ")
         for ref in list:
-            print(ref, end=' ')
+            print(ref, end=" ")
         print()
 
 
 # Call main and honor exit status
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         sys.exit(main())
     except KeyboardInterrupt:

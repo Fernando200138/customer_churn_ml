@@ -32,46 +32,59 @@ NB: A program that does not use __methods__ can set a higher limit.
 import sys
 import itertools
 
+
 class RecursiveBlowup1:
     def __init__(self):
         self.__init__()
 
+
 def test_init():
     return RecursiveBlowup1()
+
 
 class RecursiveBlowup2:
     def __repr__(self):
         return repr(self)
 
+
 def test_repr():
     return repr(RecursiveBlowup2())
+
 
 class RecursiveBlowup4:
     def __add__(self, x):
         return x + self
 
+
 def test_add():
     return RecursiveBlowup4() + RecursiveBlowup4()
+
 
 class RecursiveBlowup5:
     def __getattr__(self, attr):
         return getattr(self, attr)
 
+
 def test_getattr():
     return RecursiveBlowup5().attr
+
 
 class RecursiveBlowup6:
     def __getitem__(self, item):
         return self[item - 2] + self[item - 1]
 
+
 def test_getitem():
     return RecursiveBlowup6()[5]
+
 
 def test_recurse():
     return test_recurse()
 
+
 def test_cpickle(_cache={}):
     import io
+
     try:
         import _pickle
     except ImportError:
@@ -89,11 +102,13 @@ def test_cpickle(_cache={}):
         _pickle.Pickler(io.BytesIO(), protocol=-1).dump(l)
         _cache[n] = l
 
+
 def test_compiler_recursion():
     # The compiler uses a scaling factor to support additional levels
     # of recursion. This is a sanity check of that scaling to ensure
     # it still raises RecursionError even at higher recursion limits
     compile("()" * (10 * sys.getrecursionlimit()), "<single>", "single")
+
 
 def check_limit(n, test_func_name):
     sys.setrecursionlimit(n)
@@ -112,7 +127,8 @@ def check_limit(n, test_func_name):
     else:
         print("Yikes!")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     limit = 1000
     while 1:

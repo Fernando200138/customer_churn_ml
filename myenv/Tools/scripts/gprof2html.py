@@ -23,10 +23,12 @@ trailer = """\
 </html>
 """
 
+
 def add_escapes(filename):
     with open(filename, encoding="utf-8") as fp:
         for line in fp:
             yield html.escape(line)
+
 
 def gprof2html(input, output, filename):
     output.write(header % filename)
@@ -42,8 +44,10 @@ def gprof2html(input, output, filename):
             break
         stuff, fname = m.group(1, 2)
         labels[fname] = fname
-        output.write('%s<a name="flat:%s" href="#call:%s">%s</a>\n' %
-                     (stuff, fname, fname, fname))
+        output.write(
+            '%s<a name="flat:%s" href="#call:%s">%s</a>\n'
+            % (stuff, fname, fname, fname)
+        )
     for line in input:
         output.write(line)
         if line.startswith("index % time"):
@@ -60,11 +64,14 @@ def gprof2html(input, output, filename):
             output.write(line)
             continue
         if line.startswith("["):
-            output.write('%s<a name="call:%s" href="#flat:%s">%s</a>%s\n' %
-                         (prefix, fname, fname, fname, suffix))
+            output.write(
+                '%s<a name="call:%s" href="#flat:%s">%s</a>%s\n'
+                % (prefix, fname, fname, fname, suffix)
+            )
         else:
-            output.write('%s<a href="#call:%s">%s</a>%s\n' %
-                         (prefix, fname, fname, suffix))
+            output.write(
+                '%s<a href="#call:%s">%s</a>%s\n' % (prefix, fname, fname, suffix)
+            )
     for line in input:
         for part in re.findall(r"(\w+(?:\.c)?|\W+)", line):
             if part in labels:
@@ -83,5 +90,6 @@ def main():
         gprof2html(input, output, filename)
     webbrowser.open("file:" + os.path.abspath(outputfilename))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

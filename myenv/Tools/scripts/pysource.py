@@ -17,38 +17,47 @@ walk_python_files() recursively lists all Python files under the given directori
 """
 __author__ = "Oleg Broytmann, Georg Brandl"
 
-__all__ = ["has_python_ext", "looks_like_python", "can_be_compiled", "walk_python_files"]
+__all__ = [
+    "has_python_ext",
+    "looks_like_python",
+    "can_be_compiled",
+    "walk_python_files",
+]
 
 
 import os, re
 
-binary_re = re.compile(br'[\x00-\x08\x0E-\x1F\x7F]')
+binary_re = re.compile(rb"[\x00-\x08\x0E-\x1F\x7F]")
 
 debug = False
 
+
 def print_debug(msg):
-    if debug: print(msg)
+    if debug:
+        print(msg)
 
 
 def _open(fullpath):
     try:
         size = os.stat(fullpath).st_size
-    except OSError as err: # Permission denied - ignore the file
+    except OSError as err:  # Permission denied - ignore the file
         print_debug("%s: permission denied: %s" % (fullpath, err))
         return None
 
-    if size > 1024*1024: # too big
+    if size > 1024 * 1024:  # too big
         print_debug("%s: the file is too big: %d bytes" % (fullpath, size))
         return None
 
     try:
         return open(fullpath, "rb")
-    except IOError as err: # Access denied, or a special file - ignore it
+    except IOError as err:  # Access denied, or a special file - ignore it
         print_debug("%s: access denied: %s" % (fullpath, err))
         return None
 
+
 def has_python_ext(fullpath):
     return fullpath.endswith(".py") or fullpath.endswith(".pyw")
+
 
 def looks_like_python(fullpath):
     infile = _open(fullpath)
@@ -70,6 +79,7 @@ def looks_like_python(fullpath):
         return True
 
     return False
+
 
 def can_be_compiled(fullpath):
     infile = _open(fullpath)
@@ -99,7 +109,7 @@ def walk_python_files(paths, is_python=looks_like_python, exclude_dirs=None):
                   the search
     """
     if exclude_dirs is None:
-        exclude_dirs=[]
+        exclude_dirs = []
 
     for path in paths:
         print_debug("testing: %s" % path)
@@ -123,8 +133,8 @@ def walk_python_files(paths, is_python=looks_like_python, exclude_dirs=None):
 
 if __name__ == "__main__":
     # Two simple examples/tests
-    for fullpath in walk_python_files(['.']):
+    for fullpath in walk_python_files(["."]):
         print(fullpath)
     print("----------")
-    for fullpath in walk_python_files(['.'], is_python=can_be_compiled):
+    for fullpath in walk_python_files(["."], is_python=can_be_compiled):
         print(fullpath)

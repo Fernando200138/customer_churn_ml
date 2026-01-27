@@ -59,7 +59,7 @@ class Stats:
             self.addstats(ext, "unopenable", 1)
             return
         self.addstats(ext, "bytes", len(data))
-        if b'\0' in data:
+        if b"\0" in data:
             self.addstats(ext, "binary", 1)
             return
         if not data:
@@ -107,14 +107,14 @@ class Stats:
 
         def printheader():
             for col in cols:
-                print("%*s" % (colwidth[col], col), end=' ')
+                print("%*s" % (colwidth[col], col), end=" ")
             print()
 
         printheader()
         for ext in exts:
             for col in cols:
                 value = self.stats[ext].get(col, "")
-                print("%*s" % (colwidth[col], value), end=' ')
+                print("%*s" % (colwidth[col], value), end=" ")
             print()
         printheader()  # Another header at the bottom
 

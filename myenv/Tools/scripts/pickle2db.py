@@ -25,6 +25,7 @@ database with %(prog)s unless your keys are integers.
 """
 
 import getopt
+
 try:
     import bsddb
 except ImportError:
@@ -42,6 +43,7 @@ try:
 except ImportError:
     anydbm = None
 import sys
+
 try:
     import pickle as pickle
 except ImportError:
@@ -49,14 +51,16 @@ except ImportError:
 
 prog = sys.argv[0]
 
+
 def usage():
     sys.stderr.write(__doc__ % globals())
 
+
 def main(args):
     try:
-        opts, args = getopt.getopt(args, "hbrdag",
-                                   ["hash", "btree", "recno", "dbm", "anydbm",
-                                    "gdbm"])
+        opts, args = getopt.getopt(
+            args, "hbrdag", ["hash", "btree", "recno", "dbm", "anydbm", "gdbm"]
+        )
     except getopt.error:
         usage()
         return 1
@@ -69,7 +73,7 @@ def main(args):
         dbfile = args[0]
     else:
         try:
-            pfile = open(args[0], 'rb')
+            pfile = open(args[0], "rb")
         except IOError:
             sys.stderr.write("Unable to open %s\n" % args[0])
             return 1
@@ -122,7 +126,7 @@ def main(args):
             dbopen = bsddb.hashopen
 
     try:
-        db = dbopen(dbfile, 'c')
+        db = dbopen(dbfile, "c")
     except bsddb.error:
         sys.stderr.write("Unable to open %s.  " % dbfile)
         sys.stderr.write("Check for format or version mismatch.\n")
@@ -142,6 +146,7 @@ def main(args):
     pfile.close()
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
