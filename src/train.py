@@ -14,9 +14,10 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 from scipy.stats import uniform, loguniform
-
-
-def basic_logistic_regression(path_file, plot_precison_recall=False):
+import joblib
+from pathlib import Path
+import datetime
+def basic_logistic_regression(path_file, plot_precison_recall=False, save_model = False):
     df = data.load_data(path_file)
     df = data.clean_basic_issues(df)
     # In this model we will do feature selection manually
@@ -48,6 +49,19 @@ def basic_logistic_regression(path_file, plot_precison_recall=False):
         plt.legend()
         plt.grid(True)
         plt.show()
+    if save_model:
+        path = "D:\Documentos\Vida_profesional\Coding\Projects\customer_churn_ml\data\Saved_models"#input('Enter path to save model: ').strip().strip('"')
+        path =path.strip().strip('"')
+        model_name = 'model_lr_' + str(datetime.date.today()) + '.joblib'
+        path_model = Path(path)/model_name
+        joblib.dump(
+            {
+                "model": pipe,
+                "features": X_train.columns.tolist()
+            },
+            path_model
+        )
+
 
 '''
 We have the option to use a balanced dataset or and imbalanced one. Out dataset is
@@ -162,6 +176,6 @@ def hyperparamter_tunning(path_file,model_name=LogisticRegression(class_weight='
 
 if __name__ == "__main__":
     path_file = r"D:\Documentos\Vida_profesional\Coding\Projects\customer_churn_ml\data\raw\raw.csv"
-    #print(basic_logistic_regression(path_file=path_file))
+    basic_logistic_regression(path_file=path_file,save_model=True)
     #model_comparison(path_file)
-    hyperparamter_tunning(path_file)
+    #hyperparamter_tunning(path_file)
