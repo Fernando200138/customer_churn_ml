@@ -12,7 +12,7 @@ MODEL_COLUMNS = bundle["features"]
 X_test = pd.read_csv(
     r"D:\Documentos\Vida_profesional\Coding\Projects\customer_churn_ml\data\X_test\X_test_2026-02-03.csv"
 )
-X_test = X_test.drop(columns=["Unnamed: 0"])
+#X_test = X_test.drop(columns=["Unnamed: 0"])
 
 
 def validate_features(features: dict, columns: list):
