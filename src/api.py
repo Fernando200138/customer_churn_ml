@@ -5,9 +5,7 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-model = joblib.load(
-    r"D:\Documentos\Vida_profesional\Coding\Projects\customer_churn_ml\data\Saved_models\model_lr_2026-02-02.joblib"
-)
+
 
 bundle = joblib.load('D:\Documentos\Vida_profesional\Coding\Projects\customer_churn_ml\data\Saved_models\model_lr_2026-02-03.joblib')
 model = bundle["model"]
