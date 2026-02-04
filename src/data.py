@@ -58,7 +58,7 @@ def feature_engineering(df):
 path_file = (
     r"D:\Documentos\Vida_profesional\Coding\Projects\customer_churn_ml\data\raw\raw.csv"
 )
-def X_test(path_file):
+def X_y_test(path_file):
     df = load_data(path_file)
     df = clean_basic_issues(df)
     df_encoded = deeper_clean(df,OneHotEncoding = True)
@@ -69,9 +69,13 @@ def X_test(path_file):
     path=path_save.strip().strip('"')
     X_test_name = 'X_test_' +str(datetime.date.today())+'.csv'
     path_X_test = Path(path).joinpath(X_test_name)
-    X_test.to_csv(path_X_test)
+
+    X_test.to_csv(path_X_test,index=False)
+    y_test_name='y_test_' +str(datetime.date.today())+'.csv'
+    path_y_test = Path(path).joinpath(y_test_name)
+    y_test.to_csv(path_y_test,index=False)
 
 # print(load_data(path_file))
 # df=load_data(path_file=path_file)
-X_test(path_file)
+X_y_test(path_file)
 # print(clean_basic_issues(df))
