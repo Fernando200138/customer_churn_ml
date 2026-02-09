@@ -2,12 +2,14 @@ from typing import Dict, Any
 import pandas as pd
 import joblib
 from fastapi import FastAPI
+from pathlib import Path
 
 app = FastAPI()
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODEL_PATH = BASE_DIR / "data" / "Saved_models" / "model_lr_2026-02-03.joblib"
 
 
-
-bundle = joblib.load('D:\Documentos\Vida_profesional\Coding\Projects\customer_churn_ml\data\Saved_models\model_lr_2026-02-03.joblib')
+bundle = joblib.load(MODEL_PATH)
 model = bundle["model"]
 FEATURES = bundle["features"]
 
