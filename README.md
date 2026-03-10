@@ -178,11 +178,11 @@ The Docker image was deployed using Google Cloud Run, enabling serverless hostin
 
 https://customer-churn-476995771316.us-central1.run.app/docs
 
-API Interface:![Example image](Images\Final_output1.jpg)
+API Interface:![Example image](Images/Final_output1.jpg)
 
 
 
-Prediction Output:![Example image](Images\Final_output2.jpg)
+Prediction Output:![Example image](Images/Final_output2.jpg)
 
 
 Users can modify input parameters and receive real-time churn predictions.
@@ -195,4 +195,5 @@ Users can modify input parameters and receive real-time churn predictions.
 * No threshold optimization performed
 
 * Business cost matrix not explicitly incorporated
+
 
