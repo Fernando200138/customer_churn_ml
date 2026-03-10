@@ -1,5 +1,5 @@
 ﻿# Customer Churn Machine Learning Project
-![Example image](Images\Customer_Churn.png)
+![Example image](Images/Customer_Churn.png)
 
 ## 1. Project Overview
 
@@ -195,3 +195,4 @@ Users can modify input parameters and receive real-time churn predictions.
 * No threshold optimization performed
 
 * Business cost matrix not explicitly incorporated
+
